@@ -3,319 +3,89 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Gather 1.0 参加者向け導入ガイド</title>
+    <title>Blob Chain</title>
     <meta
       name="description"
-      content="Gather 1.0 Classic に招待された参加者向けに、PCブラウザ版とスマホブラウザ版の入り方、カメラ・マイク許可、アバター設定、基本操作を解説します。"
+      content="A browser-based falling color chain puzzle game."
     >
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23165f4f'/%3E%3Cpath d='M16 42h32V22H16v20Zm7-13h18v4H23v-4Zm0 8h11v4H23v-4Z' fill='%23f7f1df'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='26' fill='%232dd4bf'/%3E%3Ccircle cx='23' cy='22' r='7' fill='%23fff' fill-opacity='.7'/%3E%3C/svg%3E"
     >
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <header class="site-header">
-      <nav class="nav" aria-label="ページ内メニュー">
-        <a class="brand" href="#top" aria-label="Gather 1.0 参加者向け導入ガイド">
-          <span>Gather 1.0</span>
-          <strong>参加ガイド</strong>
-        </a>
-        <div class="nav-links">
-          <a href="#pc">PC版</a>
-          <a href="#mobile">スマホ版</a>
-          <a href="#trouble">困ったとき</a>
-        </div>
-      </nav>
-    </header>
-
-    <main id="top">
-      <section class="hero">
-        <div class="hero-copy">
-          <p class="eyebrow">Classic / Event / 従来スペース向け</p>
-          <h1>Gather 1.0 に招待された人のための導入方法</h1>
-          <p class="lead">
-            マップを作る人ではなく、イベントや授業、交流会に参加する人向けの手順です。
-            PCブラウザ版は日本語UIのスクショで、スマホブラウザ版は英語UIのスクショに日本語の説明を添えて確認できます。
-          </p>
-          <div class="hero-actions" aria-label="主要セクション">
-            <a class="button primary" href="#pc">PCで参加する</a>
-            <a class="button secondary" href="#mobile">スマホで参加する</a>
-          </div>
-        </div>
-
-        <figure class="hero-visual">
-          <img
-            src="https://suzukis.info/wp-content/uploads/2023/06/gatherjp006-1024x579.png"
-            alt="日本語化されたGather 1.0のルーム画面"
-          >
-          <figcaption>
-            画面例: 日本語化された Gather 1.0 ルーム
-          </figcaption>
-        </figure>
-      </section>
-
-      <section class="notice-band" aria-label="このページの前提">
-        <div>
-          <h2>このページの前提</h2>
-          <p>
-            Gather の公式日本語ページでは、Gather 1.0 はバーチャルオフィス、イベント、教室をサポートする
-            従来版として案内されています。ここでは招待リンクを受け取った参加者の操作に絞ります。
-          </p>
-        </div>
-        <a href="https://www.gather.town/ja/get-started" target="_blank" rel="noreferrer">
-          公式の1.0案内を見る
-        </a>
-      </section>
-
-      <section class="prep">
-        <div class="section-heading">
-          <p class="eyebrow">Before You Join</p>
-          <h2>入る前に用意するもの</h2>
-        </div>
-        <div class="prep-grid">
-          <article>
-            <span class="step-number">1</span>
-            <h3>招待リンク</h3>
-            <p>主催者から送られた Gather のURLを開きます。パスワードがある場合は、同じ案内文の中に書かれていることが多いです。</p>
-          </article>
-          <article>
-            <span class="step-number">2</span>
-            <h3>カメラとマイク</h3>
-            <p>ブラウザが許可を求めたら、カメラとマイクを許可します。ここを拒否すると、入室後に相手へ声や映像が届きません。</p>
-          </article>
-          <article>
-            <span class="step-number">3</span>
-            <h3>表示名</h3>
-            <p>本名、ニックネーム、所属など、イベントのルールに合わせた名前を入れます。後から変更できます。</p>
-          </article>
+    <main class="app-shell">
+      <section class="game-stage" aria-label="Blob Chain play field">
+        <canvas id="gameCanvas" width="720" height="1440"></canvas>
+        <div id="statusOverlay" class="status-overlay">
+          <strong id="statusTitle">Blob Chain</strong>
+          <span id="statusText">Ready</span>
+          <button class="primary-action" type="button" data-action="start">
+            Start
+          </button>
         </div>
       </section>
 
-      <section id="pc" class="guide-section">
-        <div class="section-heading">
-          <p class="eyebrow">Desktop</p>
-          <h2>PC版: 招待リンクから参加する</h2>
-          <p>
-            PCでは Chrome などのブラウザで招待リンクを開きます。最初の山場は
-            「権限の許可」「名前入力」「アバター設定」の3つです。
-          </p>
-        </div>
+      <aside class="hud" aria-label="Game status">
+        <header class="brand">
+          <h1>Blob Chain</h1>
+          <p>落ちもの連鎖パズル</p>
+        </header>
 
-        <div class="timeline">
-          <article class="shot-card">
-            <div class="shot-copy">
-              <span class="tag">STEP 01</span>
-              <h3>招待リンクを開く</h3>
-              <p>
-                「へようこそ」と表示されたら、カメラとマイクを使う準備に進みます。
-                主催者から合言葉やパスワードを受け取っている場合は、この前後で入力します。
-              </p>
-            </div>
-            <figure>
-              <img src="https://suzukis.info/wp-content/uploads/2023/06/gatherjp001-1024x786.png" alt="Gather 1.0の入室前画面">
-              <figcaption>画像出典: インストラクショナルデザイナーのいろいろ</figcaption>
-            </figure>
-          </article>
-
-          <article class="shot-card reverse">
-            <div class="shot-copy">
-              <span class="tag">STEP 02</span>
-              <h3>カメラとマイクを許可する</h3>
-              <p>
-                ブラウザの権限ポップアップで「許可」を選びます。うまく出ない場合は、
-                アドレスバー左側の鍵アイコンからカメラ・マイク設定を確認します。
-              </p>
-            </div>
-            <figure>
-              <img src="https://suzukis.info/wp-content/uploads/2023/06/gatherjp002-2-1024x738.png" alt="ブラウザでカメラとマイクを許可する画面">
-              <figcaption>画像出典: インストラクショナルデザイナーのいろいろ</figcaption>
-            </figure>
-          </article>
-
-          <article class="shot-card">
-            <div class="shot-copy">
-              <span class="tag">STEP 03</span>
-              <h3>名前を入れてアバターを整える</h3>
-              <p>
-                表示名を入力し、必要なら「編集」からアバターを変更します。
-                急いでいる場合は、最低限、名前だけ入れて参加しても大丈夫です。
-              </p>
-            </div>
-            <figure>
-              <img src="https://suzukis.info/wp-content/uploads/2023/06/gatherjp003-1024x888.png" alt="名前入力とアバター編集の画面">
-              <figcaption>画像出典: インストラクショナルデザイナーのいろいろ</figcaption>
-            </figure>
-          </article>
-
-          <article class="shot-card reverse">
-            <div class="shot-copy">
-              <span class="tag">STEP 04</span>
-              <h3>言語が日本語になっているか確認</h3>
-              <p>
-                日本語化の案内が出たら、言語が「日本語」になっていることを確認します。
-                画面文言が英語のままなら、設定メニューから言語を確認します。
-              </p>
-            </div>
-            <figure>
-              <img src="https://suzukis.info/wp-content/uploads/2023/06/gatherjp005-1024x519.png" alt="Gatherで日本語を選択する案内画面">
-              <figcaption>画像出典: インストラクショナルデザイナーのいろいろ</figcaption>
-            </figure>
-          </article>
-        </div>
-
-        <div class="operation-panel">
+        <section class="stat-grid" aria-label="Score board">
           <div>
-            <h3>PCでよく使う操作</h3>
-            <p>入室できたら、まずは移動、会話、チャットの3つだけ覚えれば参加できます。</p>
+            <span>Score</span>
+            <strong id="scoreValue">0</strong>
           </div>
-          <ul class="check-list">
-            <li><strong>移動:</strong> 矢印キー、WASD、または行きたい場所をダブルクリック。</li>
-            <li><strong>会話:</strong> 相手に近づくと、近くの人と音声・映像がつながります。</li>
-            <li><strong>マイク/カメラ:</strong> 画面下部のマイク・カメラボタンでオン/オフ。</li>
-            <li><strong>チャット:</strong> 右下の吹き出しから送信先を選んで投稿。</li>
-          </ul>
-        </div>
-      </section>
+          <div>
+            <span>Best</span>
+            <strong id="bestValue">0</strong>
+          </div>
+          <div>
+            <span>Chain</span>
+            <strong id="chainValue">0</strong>
+          </div>
+          <div>
+            <span>Level</span>
+            <strong id="levelValue">1</strong>
+          </div>
+        </section>
 
-      <section id="mobile" class="guide-section mobile-section">
-        <div class="section-heading">
-          <p class="eyebrow">Mobile</p>
-          <h2>スマホブラウザ版: 英語UIのまま進める</h2>
-          <p>
-            Gather 1.0 のスマホブラウザ版は、現在も英語表示の画面が中心です。
-            日本語スクショはない前提で、画面に出る英語ボタンと、その場で何をすればよいかを対応させて説明します。
-            公式ヘルプでもスマホブラウザは機能制限付きと案内されているため、できるだけPC参加を第一候補にしてください。
-          </p>
-        </div>
+        <section class="next-panel" aria-label="Next pair">
+          <span>Next</span>
+          <canvas id="nextCanvas" width="220" height="220"></canvas>
+        </section>
 
-        <div class="mobile-choice">
-          <article>
-            <h3>このセクションで扱うもの</h3>
-            <p>Safari や Chrome など、スマホのブラウザから招待リンクを開く参加方法です。アプリ版の操作説明ではありません。</p>
-          </article>
-          <article>
-            <h3>アプリ版はおまけ</h3>
-            <p>1.0モバイルアプリのUIは英語です。会議参加やチャット中心なら便利ですが、空間を歩き回るブラウザ版とは用途が違います。</p>
-          </article>
-        </div>
+        <section class="tool-row" aria-label="Game actions">
+          <button type="button" data-action="restart" title="New game" aria-label="New game">
+            &#8635;
+          </button>
+          <button type="button" data-action="pause" title="Pause" aria-label="Pause">
+            &#9208;
+          </button>
+        </section>
 
-        <div class="phone-grid">
-          <article class="phone-card">
-            <figure class="phone-frame">
-              <img src="https://suzukis.info/wp-content/uploads/2022/02/gather-mph001-473x1024.jpg" alt="スマホでGatherの制限確認画面を開いたところ">
-            </figure>
-            <div>
-              <span class="tag">STEP 01</span>
-              <h3>警告画面で続行する</h3>
-              <p>スマホ利用では英語の制限案内が出ることがあります。続ける場合は「I understand and wish to proceed」をタップします。</p>
-            </div>
-          </article>
-
-          <article class="phone-card">
-            <figure class="phone-frame">
-              <img src="https://suzukis.info/wp-content/uploads/2022/02/gather-mph003-473x1024.jpg" alt="スマホでアバターを設定する画面">
-            </figure>
-            <div>
-              <span class="tag">STEP 02</span>
-              <h3>アバターを選ぶ</h3>
-              <p>「Base」「Clothing」「Accessories」から見た目を選びます。迷ったら初期設定のまま「Next Step」へ進みます。</p>
-            </div>
-          </article>
-
-          <article class="phone-card">
-            <figure class="phone-frame">
-              <img src="https://suzukis.info/wp-content/uploads/2022/02/gather-mph005-473x1024.jpg" alt="スマホでカメラとマイクを許可する画面">
-            </figure>
-            <div>
-              <span class="tag">STEP 03</span>
-              <h3>カメラとマイクを許可する</h3>
-              <p>端末の確認画面で「許可」をタップします。拒否すると、入室後に声や映像が届かない原因になります。</p>
-            </div>
-          </article>
-
-          <article class="phone-card">
-            <figure class="phone-frame">
-              <img src="https://suzukis.info/wp-content/uploads/2022/02/gather-mph007-473x1024.jpg" alt="スマホでGatherに参加する直前のカメラと音声確認画面">
-            </figure>
-            <div>
-              <span class="tag">STEP 04</span>
-              <h3>Video と Audio を確認して参加</h3>
-              <p>カメラと音声が認識されたら「Join the Gathering」を押します。認識されない場合はページの再読み込みを試します。</p>
-            </div>
-          </article>
-
-          <article class="phone-card">
-            <figure class="phone-frame">
-              <img src="https://suzukis.info/wp-content/uploads/2022/02/gather-mph009-473x1024.jpg" alt="スマホ版Gatherのチュートリアル画面">
-            </figure>
-            <div>
-              <span class="tag">STEP 05</span>
-              <h3>ダブルタップで移動する</h3>
-              <p>チュートリアルでは「Hold and drag to move」や「Double tap to move」と表示されます。実用上はダブルタップ移動がわかりやすいです。</p>
-            </div>
-          </article>
-
-          <article class="phone-card">
-            <figure class="phone-frame">
-              <img src="https://suzukis.info/wp-content/uploads/2022/02/gather-mph0010-473x1024.jpg" alt="スマホ版Gatherでマイクとカメラボタンを表示している画面">
-            </figure>
-            <div>
-              <span class="tag">STEP 06</span>
-              <h3>マイク・カメラ・チャットを使う</h3>
-              <p>画面下のボタンでマイク、カメラ、チャットを切り替えます。声が届かない時は、このボタンがオフになっていないか確認します。</p>
-            </div>
-          </article>
-        </div>
-
-        <aside class="app-note" aria-label="モバイルアプリ補足">
-          <h3>おまけ: 1.0モバイルアプリについて</h3>
-          <p>
-            公式ヘルプでは 1.0 モバイルアプリも案内されていますが、アプリ版のUIは英語です。外出先で会議へ入る、予定から参加する、
-            チャットやリアクションを使う用途には向いています。一方で、イベント空間を自由に歩き回る体験は
-            スマホブラウザ版やPCブラウザ版と同じではないため、このページでは詳しい手順を扱いません。
-          </p>
-        </aside>
-      </section>
-
-      <section id="trouble" class="guide-section trouble">
-        <div class="section-heading">
-          <p class="eyebrow">Troubleshooting</p>
-          <h2>入れない・聞こえない時の確認</h2>
-        </div>
-        <div class="trouble-grid">
-          <article>
-            <h3>許可を拒否してしまった</h3>
-            <p>ブラウザのアドレスバー左側から、カメラとマイクを許可に変更してページを再読み込みします。</p>
-          </article>
-          <article>
-            <h3>スマホで音声や映像が不安定</h3>
-            <p>公式ヘルプでは、スマホブラウザは制限付きと案内されています。可能ならPCブラウザで入り直すのが一番確実です。</p>
-          </article>
-          <article>
-            <h3>誰とも話せない</h3>
-            <p>Gather 1.0 は近くにいる人とつながる仕組みです。相手に近づくか、同じプライベートスペースへ入ってからマイクをオンにします。</p>
-          </article>
-          <article>
-            <h3>迷子になった</h3>
-            <p>メニュー内の Respawn やホームへ戻る操作を使います。イベント中は主催者やスタッフにチャットで聞いても大丈夫です。</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="sources">
-        <h2>参照・スクリーンショット出典</h2>
-        <ul>
-          <li><a href="https://suzukis.info/2023/06/20/gather-jp/" target="_blank" rel="noreferrer">GatherのUIが日本語化されました！</a>（PC版の日本語UIスクリーンショット）</li>
-          <li><a href="https://suzukis.info/2022/03/09/gather-town-android/" target="_blank" rel="noreferrer">Gather.townをスマートフォンで使う</a>（スマホブラウザ版の英語UIスクリーンショット）</li>
-          <li><a href="https://www.gather.town/ja/get-started" target="_blank" rel="noreferrer">Gatherを始めよう</a>（公式日本語ページ、1.0 Classic の案内）</li>
-          <li><a href="https://support.gather.town/articles/7619450362-gather-1-0-on-mobile-browsers" target="_blank" rel="noreferrer">Gather 1.0 on Mobile Browsers</a>（公式ヘルプ、スマホブラウザの制限）</li>
-          <li><a href="https://support.gather.town/articles/7408975524-gather-1-0-mobile-app" target="_blank" rel="noreferrer">Gather 1.0 Mobile App</a>（公式ヘルプ、アプリ版のおまけ情報）</li>
-        </ul>
-        <p>
-          スクリーンショット画像の権利は各権利者に帰属します。このページでは導入手順を説明するために、出典を明記して参照しています。
-        </p>
-      </section>
+        <section class="touch-pad" aria-label="Touch controls">
+          <button type="button" data-action="left" title="Left" aria-label="Left">
+            &#8592;
+          </button>
+          <button type="button" data-action="rotate" title="Rotate" aria-label="Rotate">
+            &#8635;
+          </button>
+          <button type="button" data-action="right" title="Right" aria-label="Right">
+            &#8594;
+          </button>
+          <button type="button" data-action="soft" title="Down" aria-label="Down">
+            &#8595;
+          </button>
+          <button class="wide" type="button" data-action="drop" title="Drop" aria-label="Drop">
+            Drop
+          </button>
+        </section>
+      </aside>
     </main>
+
+    <script src="game.js" defer></script>
   </body>
 </html>
