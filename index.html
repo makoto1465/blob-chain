@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blob Chain</title>
+    <meta
+      name="description"
+      content="A browser-based falling color chain puzzle game."
+    >
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="game-stage" aria-label="Blob Chain play field">
+        <canvas id="gameCanvas" width="720" height="1440"></canvas>
+        <div id="statusOverlay" class="status-overlay">
+          <strong id="statusTitle">Blob Chain</strong>
+          <span id="statusText">Ready</span>
+          <button class="primary-action" type="button" data-action="start">
+            Start
+          </button>
+        </div>
+      </section>
+
+      <aside class="hud" aria-label="Game status">
+        <header class="brand">
+          <h1>Blob Chain</h1>
+          <p>落ちもの連鎖パズル</p>
+        </header>
+
+        <section class="stat-grid" aria-label="Score board">
+          <div>
+            <span>Score</span>
+            <strong id="scoreValue">0</strong>
+          </div>
+          <div>
+            <span>Best</span>
+            <strong id="bestValue">0</strong>
+          </div>
+          <div>
+            <span>Chain</span>
+            <strong id="chainValue">0</strong>
+          </div>
+          <div>
+            <span>Level</span>
+            <strong id="levelValue">1</strong>
+          </div>
+        </section>
+
+        <section class="next-panel" aria-label="Next pair">
+          <span>Next</span>
+          <canvas id="nextCanvas" width="220" height="220"></canvas>
+        </section>
+
+        <section class="tool-row" aria-label="Game actions">
+          <button type="button" data-action="restart" title="New game" aria-label="New game">
+            &#8635;
+          </button>
+          <button type="button" data-action="pause" title="Pause" aria-label="Pause">
+            &#9208;
+          </button>
+        </section>
+
+        <section class="touch-pad" aria-label="Touch controls">
+          <button type="button" data-action="left" title="Left" aria-label="Left">
+            &#8592;
+          </button>
+          <button type="button" data-action="rotate" title="Rotate" aria-label="Rotate">
+            &#8635;
+          </button>
+          <button type="button" data-action="right" title="Right" aria-label="Right">
+            &#8594;
+          </button>
+          <button type="button" data-action="soft" title="Down" aria-label="Down">
+            &#8595;
+          </button>
+          <button class="wide" type="button" data-action="drop" title="Drop" aria-label="Drop">
+            Drop
+          </button>
+        </section>
+      </aside>
+    </main>
+
+    <script src="game.js" defer></script>
+  </body>
+</html>
