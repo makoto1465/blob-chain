@@ -235,6 +235,7 @@ function lockPair() {
   activePair = null;
   state = "resolving";
   chain = 0;
+  applyGravity();
   updateOverlay();
   resolverTimer = window.setTimeout(resolveBoard, 90);
 }
