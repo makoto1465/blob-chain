@@ -1,878 +1,199 @@
-﻿<!DOCTYPE html>
-<html lang="ja" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>M-CITY 総合案内</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    
-    <!-- Google Fonts -->
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>M-CITYへようこそ</title>
+    <meta
+      name="description"
+      content="M-CITYのトップページ。簡単アクセスガイドと、M-CITYとは何かをわかりやすく紹介します。"
+    >
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Orbitron:wght@700;900&display=swap"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="bg-orb bg-orb-a"></div>
+    <div class="bg-orb bg-orb-b"></div>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#00d4ff',
-                        secondary: '#ff00ff',
-                        dark: '#050510',
-                        glass: 'rgba(20, 25, 40, 0.7)',
-                        'glass-hover': 'rgba(30, 40, 60, 0.8)',
-                        'border-light': 'rgba(255, 255, 255, 0.1)',
-                    },
-                    fontFamily: {
-                        sans: ['"Noto Sans JP"', 'sans-serif'],
-                        orbitron: ['"Orbitron"', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'glow': '0 0 20px rgba(0, 212, 255, 0.15)',
-                        'glow-hover': '0 0 30px rgba(0, 212, 255, 0.3)',
-                    },
-                    animation: {
-                        'aurora-1': 'aurora-1 20s infinite alternate',
-                        'aurora-2': 'aurora-2 25s infinite alternate',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        'aurora-1': {
-                            '0%': { transform: 'translate(0, 0) scale(1)' },
-                            '100%': { transform: 'translate(20%, 20%) scale(1.2)' },
-                        },
-                        'aurora-2': {
-                            '0%': { transform: 'translate(0, 0) scale(1)' },
-                            '100%': { transform: 'translate(-20%, -10%) scale(1.1)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        body {
-            background-color: #02040a;
-            color: #e2e8f0;
-            overflow-x: hidden;
-        }
-
-        /* 強化されたオーロラ背景 */
-        .aurora-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background: #02040a;
-            overflow: hidden;
-        }
-        .aurora-blob {
-            position: absolute;
-            filter: blur(80px);
-            opacity: 0.4;
-            border-radius: 50%;
-        }
-        .blob-1 {
-            top: -10%; left: -10%; width: 60vw; height: 60vw;
-            background: radial-gradient(circle, #00d4ff, transparent 70%);
-            animation: aurora-1 20s infinite alternate;
-        }
-        .blob-2 {
-            bottom: -10%; right: -10%; width: 60vw; height: 60vw;
-            background: radial-gradient(circle, #ff00ff, transparent 70%);
-            animation: aurora-2 25s infinite alternate;
-        }
-        .blob-3 {
-            top: 40%; left: 30%; width: 40vw; height: 40vw;
-            background: radial-gradient(circle, #0066ff, transparent 70%);
-            opacity: 0.2;
-            animation: float 15s infinite reverse;
-        }
-
-        /* カスタムガラスパネル */
-        .glass-panel {
-            background: rgba(10, 15, 30, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        /* 繊細なグラデーションテキスト */
-        .text-gradient {
-            background: linear-gradient(135deg, #fff 30%, #00d4ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* 吹き出しの矢印 */
-        .speech-bubble { position: relative; }
-        .speech-bubble::after {
-            content: '';
-            position: absolute;
-            width: 0; height: 0;
-            border-style: solid;
-        }
-        
-        /* PC用吹き出し（左向き矢印） */
-        @media (min-width: 768px) {
-            .speech-bubble::after {
-                top: 20px; left: -12px;
-                border-width: 12px 12px 12px 0;
-                border-color: transparent rgba(10, 15, 30, 0.8) transparent transparent;
-            }
-        }
-        
-        /* モバイル用吹き出し（下向き矢印） */
-        @media (max-width: 767px) {
-            .speech-bubble::after {
-                bottom: -12px; left: 50%;
-                transform: translateX(-50%);
-                border-width: 12px 12px 0 12px;
-                border-color: rgba(10, 15, 30, 0.8) transparent transparent transparent;
-            }
-        }
-
-        /* スクロールバー */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #02040a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #00d4ff; }
-
-        /* 画像の枠内収まり調整 */
-        .img-container {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            border-radius: 0.75rem;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .img-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-        .img-container:hover img {
-            transform: scale(1.02);
-        }
-
-        /* アコーディオンアイコン */
-        details > summary { list-style: none; }
-        details > summary::-webkit-details-marker { display: none; }
-        details[open] .fa-chevron-down { transform: rotate(180deg); }
-    </style>
-</head>
-<body class="antialiased font-sans">
-
-    <!-- オーロラ背景 -->
-    <div class="aurora-bg">
-        <div class="aurora-blob blob-1"></div>
-        <div class="aurora-blob blob-2"></div>
-        <div class="aurora-blob blob-3"></div>
-    </div>
-
-    <!-- ナビゲーション -->
-    <header id="main-header" class="fixed top-0 w-full z-50 bg-[#02040a]/80 backdrop-blur-xl border-b border-white/10 transition-all">
-        <div class="container mx-auto px-4 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <a href="#" class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-black shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-all">
-                        <i class="fas fa-city text-xl"></i>
-                    </div>
-                    <span class="text-xl md:text-2xl font-bold font-orbitron tracking-wider text-white">M-CITY <span class="text-sm font-normal text-gray-400 ml-1">総合案内</span></span>
-                </a>
-                
-                <nav class="hidden md:flex items-center gap-1">
-                    <a href="#entry" class="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition-all">M-CITY入口</a>
-                    <a href="#how-to-use" class="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition-all">利用方法</a>
-                    <a href="#troubleshooting" class="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition-all">Q&A</a>
-                </nav>
-
-                <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-300 hover:text-white transition-colors">
-                    <i class="fas fa-bars text-2xl"></i>
-                </button>
-            </div>
-        </div>
-        <!-- モバイルメニュー -->
-        <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 w-full bg-[#02040a]/95 backdrop-blur-xl border-t border-white/10 p-4 shadow-2xl">
-            <div class="flex flex-col space-y-2">
-                <a href="#entry" class="block p-3 rounded-lg hover:bg-white/10 text-gray-300 hover:text-white transition-colors font-bold">M-CITY入口</a>
-                <a href="#how-to-use" class="block p-3 rounded-lg hover:bg-white/10 text-gray-300 hover:text-white transition-colors font-bold">利用方法</a>
-                <a href="#troubleshooting" class="block p-3 rounded-lg hover:bg-white/10 text-gray-300 hover:text-white transition-colors font-bold">Q&A</a>
-            </div>
-        </div>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="M-CITY トップへ戻る">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">M-CITY</span>
+      </a>
+      <nav class="site-nav" aria-label="ページ内移動">
+        <a href="#guide">簡単アクセスガイド</a>
+        <a href="#about">M-CITYってなに？</a>
+        <a href="#cta">はじめかた</a>
+      </nav>
     </header>
 
-    <main class="pt-20">
-        
-        <!-- ヒーローセクション -->
-        <section id="entry" class="min-h-[90vh] flex items-center justify-center relative py-24">
-            <div class="container mx-auto px-4 relative z-10 text-center">
-                <!-- ロゴ画像 -->
-                <div class="relative w-48 h-auto mx-auto mb-8 group cursor-pointer hover:scale-105 transition-transform duration-500">
-                    <img src="https://i.imgur.com/Y6sM85p.png" 
-                         alt="M-CITY Logo" 
-                         class="w-full h-auto object-contain relative z-10 drop-shadow-2xl">
-                </div>
-                
-                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight tracking-tight drop-shadow-[0_0_30px_rgba(0,212,255,0.3)] text-white">
-                    M-CITYへ<br class="md:hidden"/>ようこそ！
-                </h1>
+    <main id="top">
+      <section class="hero section-shell">
+        <div class="hero-copy">
+          <p class="eyebrow">M-CITYへようこそ</p>
+          <h1>M-CITY簡単アクセスガイド</h1>
+          <p class="lead">
+            すぐ開けて、迷わず戻れるように。
+            ブックマーク、お気に入り、ホーム画面追加までをまとめて案内します。
+          </p>
 
-                <div class="flex flex-col items-center gap-6 mb-16">
-                    <a href="https://app.gather.town/app/O7T3B4ViTemCks4d/M-CITY%205" target="_blank" rel="noopener noreferrer" 
-                       class="group relative inline-flex items-center justify-center px-12 py-5 text-lg font-bold text-white transition-all duration-300 bg-gradient-to-r from-primary to-blue-600 rounded-full hover:shadow-[0_0_40px_rgba(0,212,255,0.5)] hover:scale-105 overflow-hidden border border-white/20">
-                        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                        <i class="fas fa-dungeon mr-3 group-hover:rotate-12 transition-transform"></i>
-                        <span>M-CITY入口</span>
-                    </a>
-                    
-                    <div class="space-y-4">
-                        <p class="text-gray-300 text-sm md:text-base max-w-lg mx-auto leading-relaxed font-medium">
-                            毎月URLが変更されるため、このページをブックマークやお気に入り、ホーム画面に追加しておくと便利です。
-                        </p>
-                        <a href="bookmark-guide.html" class="inline-flex items-center gap-2 text-primary hover:text-white transition-colors text-sm font-bold border-b border-primary/30 hover:border-white pb-0.5">
-                            <i class="fas fa-bookmark"></i>
-                            追加方法はこちら
-                        </a>
-                    </div>
-                </div>
+          <div class="hero-points" aria-label="このページの見どころ">
+            <span>ブックマーク</span>
+            <span>お気に入り</span>
+            <span>ホーム画面追加</span>
+            <span>M-CITYってなに？</span>
+          </div>
+        </div>
 
-                <!-- スマホ警告 -->
-                <div class="max-w-xl mx-auto glass-panel rounded-2xl p-6 mb-16 text-left border-l-4 border-amber-500 relative overflow-hidden group">
-                    <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <i class="fas fa-mobile-alt text-8xl text-amber-500"></i>
-                    </div>
-                    <div class="relative z-10">
-                        <p class="text-amber-400 font-bold mb-2 flex items-center gap-2 text-lg">
-                            <i class="fas fa-exclamation-triangle"></i> スマートフォンをご利用の方へ
-                        </p>
-                        <p class="text-sm text-gray-300 mb-4 leading-relaxed">
-                            アプリが自動で開いてしまう場合は、以下のボタンでリンクをコピーしてブラウザに直接貼り付けてください。
-                        </p>
-                        <div class="flex flex-col sm:flex-row items-center gap-3">
-                            <button onclick="copyMCityLink()" class="w-full sm:w-auto px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2 border border-white/10 shadow-lg">
-                                <i class="fas fa-copy"></i> M-CITYリンクをコピー
-                            </button>
-                            <span id="copy-message" class="text-green-400 text-xs font-bold hidden bg-green-900/30 px-3 py-1 rounded border border-green-500/30"><i class="fas fa-check mr-1"></i>コピー完了</span>
-                        </div>
-                    </div>
-                </div>
+        <div class="hero-visual">
+          <div class="hero-frame">
+            <img src="assets/mcity/hero-town.png" alt="M-CITYの街の全体図">
+          </div>
+          <div class="hero-note">
+            <strong>オンライン上の街へ、1タップで。</strong>
+            <p>よく使う端末に保存しておくと、次回からのアクセスがぐっと楽になります。</p>
+          </div>
+        </div>
+      </section>
 
-                <!-- 重要なお知らせ - コンパクト版 -->
-                <div class="max-w-2xl mx-auto mb-8">
-                    <div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-xl border border-white/10 shadow-lg">
-                        <div class="relative z-10 p-5">
-                            <div class="flex items-center gap-2 mb-3">
-                                <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
-                                    <i class="fas fa-exclamation-circle text-sm text-white"></i>
-                                </div>
-                                <h3 class="text-base font-bold text-white">重要なお知らせ</h3>
-                            </div>
-                            <div class="bg-gradient-to-br from-blue-950/30 to-purple-950/30 rounded-lg p-3 border border-primary/20 mb-2">
-                                <p class="text-sm text-white leading-relaxed mb-2">
-                                    初めての方は<a href="#how-to-use" class="text-primary hover:text-white underline underline-offset-2 transition-colors font-bold">「M-CITYの利用方法」</a>を必ず確認してください。
-                                </p>
-                                <div class="rounded-lg bg-amber-900/30 border-l-2 border-amber-500 p-2">
-                                    <p class="text-xs text-amber-100 leading-relaxed">
-                                        特にPCやスマホ操作が苦手な方は感覚で覚えようとするとかえって時間が掛かってしまいます
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="bg-red-950/20 border border-red-500/30 rounded-lg p-2 text-center">
-                                <p class="text-xs text-red-300 font-semibold">
-                                    <i class="fas fa-ban mr-1"></i>初めての方、M-CITYに慣れていない方は<span class="text-red-400 font-bold">スマホ・タブレット版アプリ</span>は絶対に入手しないでください
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <section id="guide" class="guide section-shell">
+        <div class="section-heading">
+          <p class="section-kicker">M-CITY簡単アクセスガイド</p>
+          <h2>ブックマーク・お気に入り・画面の追加方法</h2>
+          <p>
+            いつものブラウザから、少しだけ手元に寄せておくための3つの方法です。
+            PCでもスマホでも、あなたの使いやすい形でどうぞ。
+          </p>
+        </div>
+
+        <div class="guide-grid">
+          <article class="guide-card guide-card-cyan">
+            <div class="guide-index">01</div>
+            <h3>ブックマークに保存</h3>
+            <p>まずはページをブックマーク。次回からURLを探さず、すぐに開けます。</p>
+            <ul>
+              <li>ブラウザのメニューから「ブックマークに追加」</li>
+              <li>名前は「M-CITY」など覚えやすい表記でOK</li>
+              <li>よく使うフォルダに入れておくとさらに便利</li>
+            </ul>
+          </article>
+
+          <article class="guide-card guide-card-magenta">
+            <div class="guide-index">02</div>
+            <h3>お気に入りバーに置く</h3>
+            <p>PCならお気に入りバーに固定して、1クリックでアクセスできます。</p>
+            <ul>
+              <li>お気に入りバーを表示しておく</li>
+              <li>アイコンだけの表示にすると省スペース</li>
+              <li>他のよく使うサイトと並べて管理しやすい</li>
+            </ul>
+          </article>
+
+          <article class="guide-card guide-card-lime">
+            <div class="guide-index">03</div>
+            <h3>ホーム画面に追加</h3>
+            <p>スマホならホーム画面に置いて、アプリ感覚で開けます。</p>
+            <ul>
+              <li>共有メニューから「ホーム画面に追加」</li>
+              <li>アイコン名は短くすると見つけやすい</li>
+              <li>毎日使う人にはいちばん相性のいい方法です</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="guide-foot">
+          <div class="guide-foot-copy">
+            <strong>ひとつだけ選ぶなら、まずはブックマーク。</strong>
+            <p>PCとスマホの両方で使うなら、お気に入りバーとホーム画面追加を組み合わせるのがおすすめです。</p>
+          </div>
+          <div class="guide-foot-image">
+            <img src="assets/mcity/event-collage.png" alt="M-CITYの街で過ごす人たちの様子">
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="about section-shell">
+        <div class="section-heading section-heading-wide">
+          <p class="section-kicker">M-CITYってなに？</p>
+          <h2>オンライン上にひとつの「街」をつくったコミュニティ</h2>
+          <p>
+            レトロなRPGのような世界で、アバターを動かしながら雑談したり、作業を並走したり、
+            ちょっとした相談をしたり。SNSでもチャットでもZoomでもない、ちょうど中間の居場所です。
+          </p>
+        </div>
+
+        <div class="about-layout">
+          <div class="about-copy">
+            <div class="quote-box">
+              <span class="quote-mark">“</span>
+              <p>
+                同じ街に住む住民同士が、お互いの時間や距離感を大切にしながら、
+                ゆるくつながっていける場所。
+              </p>
             </div>
-        </section>
 
-        <!-- クイックリンク (カードレイアウト調整) -->
-        <section class="py-20 relative z-10">
-            <div class="container mx-auto px-4 lg:px-8">
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <!-- Link Item 1 -->
-                    <a href="mcity-about.html" class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-4 hover:bg-white/10 transition-all duration-300 group h-full border border-white/5 hover:border-primary/30">
-                        <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-info-circle text-3xl text-primary"></i>
-                        </div>
-                        <span class="text-sm font-bold text-gray-200 group-hover:text-white">M-CITYとは？</span>
-                    </a>
-                    
-                    <!-- Link Item 2 -->
-                    <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-4 hover:bg-white/10 transition-all duration-300 group h-full border border-white/5 hover:border-green-400/30 relative">
-                        <a href="#openchat" class="absolute inset-0 z-10"></a>
-                        <div class="w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <i class="fab fa-line text-3xl text-green-400"></i>
-                        </div>
-                        <span class="text-sm font-bold text-gray-200 group-hover:text-white">オープンチャット</span>
-                        <span class="text-[10px] text-primary mt-auto font-bold">詳細はこちら &raquo;</span>
-                    </div>
-
-                    <!-- Link Item 3 (Dev) -->
-                    <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-4 opacity-60 h-full border border-white/5">
-                        <div class="w-14 h-14 rounded-full bg-orange-500/10 flex items-center justify-center">
-                            <i class="fas fa-robot text-3xl text-orange-400"></i>
-                        </div>
-                        <span class="text-sm font-bold text-gray-300">AIヘルプセンター</span>
-                        <span class="text-[10px] text-amber-300 mt-auto font-bold">現在開発中です</span>
-                    </div>
-
-                    <!-- Link Item 4 -->
-                    <div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-4 hover:bg-white/10 transition-all duration-300 group h-full border border-white/5 hover:border-red-500/30 relative">
-                        <a href="#tour-video" class="absolute inset-0 z-10"></a>
-                        <div class="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-video text-3xl text-red-500"></i>
-                        </div>
-                        <span class="text-sm font-bold text-gray-200 group-hover:text-white">M-CITYツアー動画</span>
-                        <span class="text-[10px] text-primary mt-auto font-bold">詳細はこちら &raquo;</span>
-                    </div>
-
-                    <!-- Link Item 5 -->
-                    <a href="bookmark-guide.html" class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-4 hover:bg-white/10 transition-all duration-300 group h-full border border-white/5 hover:border-yellow-400/30">
-                        <div class="w-14 h-14 rounded-full bg-yellow-400/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-bookmark text-3xl text-yellow-400"></i>
-                        </div>
-                        <span class="text-sm font-bold text-gray-200 group-hover:text-white">お気に入り追加方法</span>
-                    </a>
-
-                </div>
+            <div class="feature-list">
+              <div>
+                <span>雑談</span>
+                <p>たまたま近くにいた人と、思いがけない話が始まる。</p>
+              </div>
+              <div>
+                <span>作業</span>
+                <p>誰かがいる気配の中で、ひとり作業も心地よく進む。</p>
+              </div>
+              <div>
+                <span>相談</span>
+                <p>少し勇気を出して、もやもやを言葉にしてみる。</p>
+              </div>
             </div>
-        </section>
+          </div>
 
-        <!-- 利用方法セクション -->
-        <section id="how-to-use" class="py-24 relative z-10">
-            <div class="container mx-auto px-4 lg:px-8">
-                <div class="text-center mb-20">
-                    <h2 class="text-3xl md:text-5xl font-black mb-4 flex items-center justify-center gap-3 text-white">
-                        <i class="fas fa-book-open text-primary"></i>
-                        M-CITY利用方法
-                    </h2>
-                    <div class="inline-block bg-red-500/10 border border-red-500/20 px-6 py-2 rounded-full mt-4 backdrop-blur-sm">
-                        <p class="text-red-400 font-bold text-sm tracking-wide">
-                            <i class="fas fa-exclamation-circle mr-2"></i>初めての方は必ず確認してください
-                        </p>
-                    </div>
-                </div>
-
-                <div class="max-w-5xl mx-auto space-y-16">
-                    
-                    <!-- Step 1 -->
-                    <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden group">
-                        <div class="absolute top-0 left-0 w-2 h-full bg-primary shadow-[0_0_15px_#00d4ff]"></div>
-                        <div class="flex flex-col md:flex-row gap-8 items-start">
-                            <div class="flex-1 w-full">
-                                <h3 class="text-2xl font-bold mb-6 text-white flex items-center gap-3">
-                                    <span class="text-4xl font-orbitron text-primary opacity-50 group-hover:opacity-100 transition-opacity font-black">01</span>
-                                    動作環境
-                                </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div class="bg-white/5 rounded-xl p-5 border border-white/5">
-                                        <h4 class="font-bold text-primary mb-3 text-sm tracking-wider uppercase border-b border-white/10 pb-2">PC版 対応ブラウザ</h4>
-                                        <ul class="space-y-2 text-sm text-gray-300">
-                                            <li class="flex items-center gap-2"><i class="fas fa-check text-xs text-primary"></i> Google Chrome</li>
-                                            <li class="flex items-center gap-2"><i class="fas fa-check text-xs text-primary"></i> Microsoft Edge</li>
-                                            <li class="flex items-center gap-2"><i class="fas fa-check text-xs text-primary"></i> Safari</li>
-                                        </ul>
-                                    </div>
-                                    <div class="bg-white/5 rounded-xl p-5 border border-white/5">
-                                        <h4 class="font-bold text-green-400 mb-3 text-sm tracking-wider uppercase border-b border-white/10 pb-2">スマホ版 対応ブラウザ</h4>
-                                        <ul class="space-y-2 text-sm text-gray-300">
-                                            <li class="flex items-center gap-2"><i class="fab fa-apple text-gray-500"></i> iPhone: <strong>Safari のみ</strong></li>
-                                            <li class="flex items-center gap-2"><i class="fab fa-android text-gray-500"></i> Android: <strong>Google Chrome のみ</strong></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 2 -->
-                    <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden group">
-                        <div class="absolute top-0 left-0 w-2 h-full bg-purple-500 shadow-[0_0_15px_#a855f7]"></div>
-                        <h3 class="text-2xl font-bold mb-6 text-white flex items-center gap-3">
-                            <span class="text-4xl font-orbitron text-purple-500 opacity-50 group-hover:opacity-100 transition-opacity font-black">02</span>
-                            入室画面・サインイン
-                        </h3>
-                        <div class="mb-6 bg-black/40 rounded-xl overflow-hidden border border-white/10">
-                            <img src="https://i.imgur.com/JsOnKU1.png" alt="入室画面" class="w-full h-auto object-cover opacity-90 group-hover:scale-[1.02] transition-transform duration-700" onerror="this.onerror=null;this.src='https://placehold.co/800x450/0f172a/334155?text=No+Image';">
-                        </div>
-                        <p class="text-amber-400 text-xs font-bold mb-3 bg-amber-900/30 inline-block px-3 py-1 rounded border border-amber-500/30"><i class="fas fa-info-circle mr-1"></i> ※ここからは画像の読み込みに多少の時間がかかる場合があります。</p>
-                        <p class="text-gray-300 mb-4 leading-relaxed">入口から入った直後はこの画面が表示されます（PC版の例ですがスマホ版でも同様の操作が可能です）。</p>
-                        <div class="bg-white/5 p-5 rounded-xl border border-white/5">
-                            <p class="text-sm text-gray-300 leading-relaxed">
-                                <strong class="text-primary text-base">サインイン:</strong> Googleアカウントで簡単にサインイン（ログイン） できます。画面右上の「サインイン」をクリックして次の画面で<span class="text-white bg-white/10 px-2 py-0.5 rounded mx-1 font-bold">「Googleでサインインする」</span>ボタンを押してください。 サインイン無しで進むこともできますが、<span class="text-amber-400 font-bold">初めにサインインしておくことをお勧めしています</span>。
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Step 3 -->
-                    <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden group">
-                        <div class="absolute top-0 left-0 w-2 h-full bg-pink-500 shadow-[0_0_15px_#ec4899]"></div>
-                        <h3 class="text-2xl font-bold mb-8 text-white flex items-center gap-3">
-                            <span class="text-4xl font-orbitron text-pink-500 opacity-50 group-hover:opacity-100 transition-opacity font-black">03</span>
-                            名前・アバターの設定とマイク・カメラ許可
-                        </h3>
-                        
-                        <div class="flex flex-col lg:flex-row gap-10">
-                            <!-- 画像エリア -->
-                            <div class="w-full lg:w-1/2 flex-shrink-0">
-                                <div class="img-container bg-black/40 shadow-xl">
-                                    <img src="https://i.imgur.com/dV0sWtK.png" alt="設定画面" class="w-full h-full object-contain" onerror="this.onerror=null;this.src='https://placehold.co/600x500/0f172a/334155?text=Settings+Image';">
-                                </div>
-                            </div>
-                            
-                            <!-- テキストエリア -->
-                            <div class="w-full lg:w-1/2 space-y-6">
-                                <div class="flex gap-4">
-                                    <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 flex-shrink-0"><i class="fas fa-microphone"></i></div>
-                                    <div>
-                                        <h4 class="font-bold text-white mb-1">マイク・カメラのアクセス許可</h4>
-                                        <p class="text-sm text-gray-400">「マイクを使用しますか？」などの確認画面が表示されたら、必ず<strong class="text-green-400">「許可する」</strong>を選択してください。（後でON/OFF可能）</p>
-                                    </div>
-                                </div>
-
-                                <div class="flex gap-4">
-                                    <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary flex-shrink-0"><i class="fas fa-tag"></i></div>
-                                    <div>
-                                        <h4 class="font-bold text-white mb-1">名前の入力</h4>
-                                        <p class="text-sm text-gray-400 mb-2">名前入力欄にM-CITY内で使用する名前を入力します。</p>
-                                        <p class="text-xs text-gray-500 bg-white/5 p-3 rounded-lg border border-white/5">
-                                            <span class="text-primary font-bold">「(初)」「🔰 」「(会話不可)」「(チャットのみ)」「(散策中)」</span>といった意思表示（組み合わせ可）があれば名前に含めてもらえると案内や話しかけの判断がしやすくなります。
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="flex gap-4">
-                                    <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 flex-shrink-0"><i class="fas fa-tshirt"></i></div>
-                                    <div>
-                                        <h4 class="font-bold text-white mb-1">アバターの編集</h4>
-                                        <p class="text-sm text-gray-400"><strong class="text-white">「キャラクター編集」</strong>ボタンからアバターの見た目（ベース、服装、アクセサリなど）を編集できます。</p>
-                                    </div>
-                                </div>
-
-                                <div class="mt-4 pt-6 border-t border-white/10 text-center">
-                                    <p class="font-bold text-white text-lg">最後に<span class="text-primary text-xl mx-1">「参加」</span>または<span class="text-primary text-xl mx-1">「ギャザリングに参加する」</span>ボタンを押して入室します。</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 4 -->
-                    <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden group">
-                        <div class="absolute top-0 left-0 w-2 h-full bg-yellow-400 shadow-[0_0_15px_#facc15]"></div>
-                        <h3 class="text-2xl font-bold mb-6 text-white flex items-center gap-3">
-                            <span class="text-4xl font-orbitron text-yellow-400 opacity-50 group-hover:opacity-100 transition-opacity font-black">04</span>
-                            初心者の館
-                        </h3>
-                        <div class="flex flex-col md:flex-row gap-8 items-center">
-                            <div class="w-full md:w-2/3">
-                                <div class="img-container shadow-xl">
-                                    <img src="https://i.imgur.com/l8vENX0.png" alt="初心者の館" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0f172a/334155?text=Beginner+Zone';">
-                                </div>
-                            </div>
-                            <div class="w-full md:w-1/3">
-                                <p class="text-gray-300 text-sm leading-relaxed mb-4">
-                                    M-CITYに入室直後は「初心者の館」からスタートします。床に書かれた案内通りに進んで行き、オブジェクト（看板など）に近づいて<strong class="text-yellow-400 bg-yellow-400/10 border border-yellow-400/30 px-2 rounded text-lg mx-1">X</strong>ボタン（キー）を押すと表示される案内を見ていく事で最低限の基本操作を覚えることができます。
-                                </p>
-                            </div>
-                        </div>
-                        <div class="mt-6 p-4 bg-white/5 rounded-xl border-l-4 border-primary">
-                            <p class="font-bold text-white mb-1">入室までに関してはここまで読んでもらえれば大丈夫です。</p>
-                            <p class="text-xs text-gray-400 mb-2">分からない場合はこれ以降の説明に詳しく書かれていますので確認してください。</p>
-                            <p class="text-primary text-xs font-bold">ピーク時間（21時以降）はサポートチームがいる場合が多いのでその場合は誰かが迎えに行きます。</p>
-                        </div>
-                    </div>
-
-                    <!-- Step 5: PC操作 -->
-                    <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden group border border-white/5">
-                        <div class="flex items-center gap-4 mb-8 border-b border-white/10 pb-4">
-                            <span class="bg-white/10 text-primary px-3 py-1 rounded text-sm font-orbitron font-bold">05</span>
-                            <h3 class="text-2xl font-bold text-white">PC版の操作方法</h3>
-                        </div>
-                        
-                        <div class="flex flex-col gap-8">
-                            <div class="w-full">
-                                <div class="img-container border border-white/10 shadow-2xl">
-                                    <img src="https://i.imgur.com/UsELwQm.png" alt="PC操作" onerror="this.onerror=null;this.src='https://placehold.co/800x450/0f172a/334155?text=PC+Controls';">
-                                </div>
-                            </div>
-                            <div class="w-full grid md:grid-cols-2 gap-4">
-                                <div class="bg-white/5 p-5 rounded-xl border border-white/5">
-                                    <strong class="text-primary block mb-2 text-lg"><i class="fas fa-arrows-alt mr-2"></i>移動</strong>
-                                    <p class="text-sm text-gray-300">キーボードの矢印キー (↑ ↓ ← →)。</p>
-                                </div>
-                                <div class="bg-white/5 p-5 rounded-xl border border-white/5">
-                                    <strong class="text-yellow-400 block mb-2 text-lg"><i class="fas fa-hand-pointer mr-2"></i>オブジェクト操作</strong>
-                                    <p class="text-sm text-gray-300">対象に近づき<strong class="text-white">「X」キー</strong>。看板の情報を読んだり、動画を再生したりできます。</p>
-                                </div>
-                                <div class="bg-white/5 p-5 rounded-xl border border-white/5 md:col-span-2">
-                                    <strong class="text-purple-400 block mb-2 text-lg"><i class="fas fa-comments mr-2"></i>会話</strong>
-                                    <p class="text-sm text-gray-300">話したい人の<strong class="text-white">半径5歩以内</strong>に近づくと自動的にビデオ通話が開始され、離れると終了します。</p>
-                                </div>
-                                <div class="bg-white/5 p-5 rounded-xl border border-white/5 md:col-span-2">
-                                    <strong class="text-white block mb-2 text-lg"><i class="fas fa-bars mr-2"></i>画面下部メニュー</strong>
-                                    <ul class="list-disc list-inside space-y-1 text-xs text-gray-400 ml-2">
-                                        <li>キャラクター設定（自分のアバターアイコン）: マイク・カメラのON/OFF、ステータス設定など。</li>
-                                        <li>画面共有: 自分の画面を他の人に見せることができます。</li>
-                                        <li>チャット（吹き出しアイコン）: テキストチャットができます。</li>
-                                        <li>参加メンバー一覧（人型アイコン）: 現在M-CITYにいるメンバーを確認できます。</li>
-                                        <li>エモート（顔アイコン）: 吹き出しで感情を表現できます。</li>
-                                        <li>退室（ドアアイコン）: M-CITYから退出します。</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 6: スマホ操作 -->
-                    <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden group border border-white/5">
-                        <div class="flex items-center gap-4 mb-8 border-b border-white/10 pb-4">
-                            <span class="bg-white/10 text-green-400 px-3 py-1 rounded text-sm font-orbitron font-bold">06</span>
-                            <h3 class="text-2xl font-bold text-white">スマホ・タブレット版の操作方法</h3>
-                        </div>
-                        
-                        <div class="flex flex-col gap-8">
-                            <div class="w-full">
-                                <div class="img-container border border-white/10 shadow-2xl">
-                                    <img src="https://i.imgur.com/XUNbBTI.png" alt="スマホ操作" onerror="this.onerror=null;this.src='https://placehold.co/800x450/0f172a/334155?text=Mobile+Controls';">
-                                </div>
-                            </div>
-                            <div class="w-full grid md:grid-cols-2 gap-4">
-                                <div class="bg-white/5 p-5 rounded-xl border border-white/5">
-                                    <strong class="text-green-400 block mb-2 text-lg"><i class="fas fa-shoe-prints mr-2"></i>アバターの移動方法</strong>
-                                    <p class="text-sm text-gray-300"><strong class="text-white">画面を長押しした後に出てくる白い丸（バーチャルパッド）をスワイプ</strong>（指でなぞる）。（詳細は入室直後のモニターでXボタンを押して確認可能）</p>
-                                </div>
-                                <div class="bg-white/5 p-5 rounded-xl border border-white/5">
-                                    <strong class="text-yellow-400 block mb-2 text-lg"><i class="fas fa-hand-pointer mr-2"></i>オブジェクト操作</strong>
-                                    <p class="text-sm text-gray-300">対象に近づくと画面右下に表示される黄色い<strong class="text-white bg-yellow-400/20 px-2 rounded mx-1">X</strong>ボタンをタップ。</p>
-                                </div>
-                                <div class="bg-white/5 p-5 rounded-xl border border-white/5 md:col-span-2">
-                                    <strong class="text-white block mb-2 text-lg"><i class="fas fa-bars mr-2"></i>画面下部メニュー</strong>
-                                    <ul class="list-disc list-inside space-y-1 text-xs text-gray-400 ml-2">
-                                        <li>自分の名前/アバターアイコン: マイク・カメラのON/OFF、ステータス編集など。</li>
-                                        <li>チャットアイコン（吹き出し）: チャット画面を開き、参加者一覧も確認できます。</li>
-                                        <li>メニューアイコン（三本線や歯車など）: 音声ビデオ設定、リスポーン（スタート地点に戻る）、サインアウト（<strong class="text-red-400">退室時は毎回サインアウト不要</strong>）など。</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 7 -->
-                    <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden group border-l-4 border-l-indigo-500">
-                        <div class="flex items-center gap-4 mb-8">
-                            <span class="text-4xl font-orbitron font-bold text-indigo-500 opacity-50 group-hover:opacity-100 transition-opacity font-black">07</span>
-                            <h3 class="text-2xl font-bold text-white">オブジェクト機能</h3>
-                        </div>
-                        <div class="flex flex-col gap-6">
-                            <div class="space-y-4">
-                                <p class="text-gray-300 text-sm leading-relaxed">
-                                    オブジェクト機能とは、M-CITY内に設置された<strong class="text-primary">看板、モニター、仮想住人(頭の上に名前がない人)</strong>などの特定のアイテムに、何らかのアクションを起こさせるための基本的な機能です。
-                                </p>
-                                <p class="text-gray-300 text-sm leading-relaxed">
-                                    まず自分のキャラクターを対象のオブジェクトのすぐ近くまで移動させ、キーボードの<strong class="text-yellow-400">「X」 ボタン</strong>(スマホ・タブレットの場合は右下に黄色のXボタンが出現します)を押します。いろんなオブジェクトに対してこの操作をすると、テキストや画像を表示したり、埋め込まれた動画を再生したり、別のサイトを観覧することができます。
-                                </p>
-                                <div class="bg-black/30 p-4 rounded-xl border border-white/10">
-                                    <h4 class="font-bold text-primary text-sm mb-2">PC版便利キー:</h4>
-                                    <ul class="space-y-1 text-xs text-gray-400">
-                                        <li><strong class="text-primary">「G」</strong>キー: キャラクターが<strong class="text-white">半透明になり他の人をすり抜け可能</strong>（ゴーストモード）。</li>
-                                        <li><strong class="text-primary">「Z」</strong>キー: ダンスを踊る。</li>
-                                        <li><strong class="text-primary">「F」</strong>キー: 紙吹雪を撒く。</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="w-full">
-                                <div class="bg-black/40 rounded-xl overflow-hidden border border-white/10 shadow-xl">
-                                    <img src="https://i.imgur.com/CixPfpA.png" alt="オブジェクト機能" class="w-full h-auto object-contain" onerror="this.onerror=null;this.src='https://placehold.co/700x400/0f172a/334155?text=Objects';">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 8 -->
-                    <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden group border-l-4 border-l-blue-500">
-                        <div class="flex items-center gap-4 mb-8">
-                            <span class="text-4xl font-orbitron font-bold text-blue-500 opacity-50 group-hover:opacity-100 transition-opacity font-black">08</span>
-                            <h3 class="text-2xl font-bold text-white">参加者リスト・人を探す・ついて行く</h3>
-                        </div>
-                        <div class="space-y-10">
-                            <div>
-                                <h4 class="font-bold text-xl text-primary mb-4 border-b border-white/10 pb-2">PC版</h4>
-                                <div class="mb-6 bg-black/40 rounded-xl overflow-hidden border border-white/10 shadow-xl" style="aspect-ratio: 16/9;">
-                                    <img src="https://i.imgur.com/LwwfCnv.png" alt="PCリスト" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/800x500/0f172a/334155?text=PC+List';">
-                                </div>
-                                <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
-                                    <li>画面右下の<strong class="text-primary">参加者アイコン（人型）</strong>をクリック。</li>
-                                    <li>リスト内のメンバー名クリックで詳細表示。</li>
-                                    <li><strong class="text-white">「マップ上で見つける」</strong>: 相手までの道のりが黒い線で表示。</li>
-                                    <li><strong class="text-white">「歩いていく」</strong>: 自動的に相手のそばまで移動（追従はしない）。</li>
-                                    <li><strong class="text-white">「フォロー」</strong>: 相手の元まで自動で歩き、そのまま追従。自分で動くか「フォローをやめる」で解除。</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-xl text-green-400 mb-4 border-b border-white/10 pb-2">スマホ・タブレット版</h4>
-                                <div class="mb-6 bg-black/40 rounded-xl overflow-hidden border border-white/10 shadow-xl" style="aspect-ratio: 16/9;">
-                                    <img src="https://i.imgur.com/v9BbGSW.png" alt="スマホリスト" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/800x500/0f172a/334155?text=Mobile+List';">
-                                </div>
-                                <ul class="list-disc list-inside space-y-2 text-sm text-gray-300">
-                                    <li>画面右下の<strong class="text-primary">チャットアイコン（吹き出し）</strong>をタップ後、上部の<strong class="text-primary">「参加者」</strong>タブを選択。</li>
-                                    <li>リスト内のメンバー名をタップで詳細表示。</li>
-                                    <li><strong class="text-white">「マップ上で見つける」</strong>: 相手までの道のりが黒い線で表示。「位置特定をやめる」で線が消える。</li>
-                                    <li><strong class="text-white">「フォロー」</strong>: 相手の元まで自動で歩き、そのまま追従。自分で動くか「フォローをやめる」で解除。</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- CTA Block -->
-                    <div class="text-center py-8">
-                        <div class="glass-panel p-10 rounded-3xl inline-block max-w-4xl border border-primary/20 relative overflow-hidden group">
-                            <div class="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors"></div>
-                            <h3 class="font-bold text-2xl text-white mb-4 relative z-10"><strong class="text-red-500">初めての方はとりあえずここまで！</strong></h3>
-                            <p class="text-gray-300 mb-8 relative z-10 text-sm md:text-base">ご観覧ありがとうございました。ここまでで基本的な操作はご理解いただけたかと思います。<br>もし、さらに詳しい情報や応用的な使い方を知りたい方は、以下の「詳細・応用編はこちら」から、より詳細なガイドをご覧ください。</p>
-                            <a href="https://tamcity.my.canva.site/dagpebmouuk" target="_blank" rel="noopener noreferrer" 
-                               class="relative z-10 inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white border border-white/20 px-8 py-4 rounded-full font-bold transition-all hover:scale-105 shadow-lg">
-                                <i class="fas fa-link"></i> 詳細・応用編はこちら
-                            </a>
-                            <p class="mt-6 text-gray-500 text-xs relative z-10">もしわからないことがあれば、この後の「<a href="#troubleshooting" class="text-primary hover:text-white underline transition-colors">トラブルシューティング</a>」をご確認ください。</p>
-                        </div>
-                    </div>
-
-                    <!-- Video Archive -->
-                    <div id="tour-video" class="glass-panel p-8 rounded-3xl border-t-4 border-t-red-500">
-                        <h3 class="font-bold text-xl text-white mb-4"><i class="fas fa-video text-red-500 mr-2"></i>M-CITYツアーを動画で観る</h3>
-                        <p class="text-xs text-gray-400 mb-4 bg-white/5 p-4 rounded-xl">※こちらの動画は旧「たむシティ」のツアー映像です。「M-CITY」とは校舎エリアが無いなど一部仕様が異なりますが、基本的な構造はほぼ同じですので、探索の参考としてご覧ください。</p>
-                        <div class="relative w-full pt-[56.25%] bg-black rounded-xl overflow-hidden shadow-2xl border border-white/10">
-                            <iframe src="https://www.youtube.com/embed/Vzf5aRxpv1A?si=_YYhsjUmiAS-aTbW" class="absolute top-0 left-0 w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                        </div>
-                    </div>
-                </div>
+          <div class="about-visual">
+            <figure class="about-card about-card-main">
+              <img src="assets/mcity/concept-town.jpeg" alt="M-CITYの街のコンセプト画像">
+            </figure>
+            <div class="about-side">
+              <figure class="about-card about-card-small">
+                <img src="assets/mcity/bar.jpeg" alt="BARエリアのイメージ">
+              </figure>
+              <figure class="about-card about-card-small">
+                <img src="assets/mcity/friend-cafe.jpeg" alt="フレンドカフェエリアのイメージ">
+              </figure>
+              <figure class="about-card about-card-small">
+                <img src="assets/mcity/net-cafe.jpeg" alt="ネットカフェエリアのイメージ">
+              </figure>
+              <figure class="about-card about-card-small">
+                <img src="assets/mcity/secret-base.jpeg" alt="みんなの秘密基地エリアのイメージ">
+              </figure>
             </div>
-        </section>
+          </div>
+        </div>
+      </section>
 
-        <!-- トラブルシューティング -->
-        <section id="troubleshooting" class="py-24 relative z-10">
-            <div class="container mx-auto px-4 max-w-4xl">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-white mb-2 flex items-center justify-center gap-3">
-                        <i class="fas fa-question-circle text-primary"></i>
-                        10. トラブルシューティング (Q&A)
-                    </h2>
-                    <div class="h-1 w-24 bg-gradient-to-r from-primary to-transparent mx-auto rounded-full"></div>
-                </div>
-
-                <div class="space-y-4">
-                    <!-- Q1 -->
-                    <details class="group bg-[#0a0f1e] rounded-xl border border-white/5 overflow-hidden open:bg-white/5 transition-all">
-                        <summary class="flex items-center justify-between p-6 cursor-pointer font-bold text-white hover:bg-white/5 transition-colors">
-                            <span class="flex items-center gap-3"><span class="w-1.5 h-6 bg-red-500 rounded-full"></span>参加ボタン（入室ボタン）を押しても反応しない</span>
-                            <i class="fas fa-chevron-down text-gray-500 transition-transform group-open:rotate-180"></i>
-                        </summary>
-                        <div class="p-6 pt-0 text-gray-300 text-sm border-t border-white/5 mt-2 animate-[fadeIn_0.3s_ease]">
-                            <p class="mt-4 mb-4">入室前に<strong class="text-red-400">カメラ・マイクの許可</strong>をしていないと入れません。許可をしても入れない場合はブラウザの設定でカメラやマイクの設定が<strong class="text-red-400">拒否</strong>になっている場合が多いです。</p>
-                            <p class="mb-2 font-bold text-primary">ブラウザの設定方法：</p>
-                            <div class="flex flex-col sm:flex-row gap-4 text-xs">
-                                <a href="https://lab.parque.io/details/36961d02722c4436bc881c49dcfdc419" target="_blank" class="text-primary hover:text-white underline">・スマホ・タブレット設定</a>
-                                <a href="https://lab.parque.io/details/7d98e5d990bd4d13a918c5619801ec10" target="_blank" class="text-primary hover:text-white underline">・Windows設定</a>
-                                <a href="https://support.metalife.co.jp/efe4438775a341d2abb489e5e36b052a" target="_blank" class="text-primary hover:text-white underline">・Mac設定</a>
-                            </div>
-                        </div>
-                    </details>
-
-                    <!-- Q2 -->
-                    <details class="group bg-[#0a0f1e] rounded-xl border border-white/5 overflow-hidden open:bg-white/5 transition-all">
-                        <summary class="flex items-center justify-between p-6 cursor-pointer font-bold text-white hover:bg-white/5 transition-colors">
-                            <span class="flex items-center gap-3"><span class="w-1.5 h-6 bg-amber-500 rounded-full"></span>相手の声が聞こえない / 自分の声が相手に聞こえない</span>
-                            <i class="fas fa-chevron-down text-gray-500 transition-transform group-open:rotate-180"></i>
-                        </summary>
-                        <div class="p-6 pt-0 text-gray-300 text-sm border-t border-white/5 mt-2">
-                            <p class="mt-4"><strong class="text-primary">一度M-CITYを退室してもう一度入り直してください。</strong>多くの場合はこの操作で解決する場合が多いです。</p>
-                        </div>
-                    </details>
-
-                    <!-- Q3 -->
-                    <details class="group bg-[#0a0f1e] rounded-xl border border-white/5 overflow-hidden open:bg-white/5 transition-all">
-                        <summary class="flex items-center justify-between p-6 cursor-pointer font-bold text-white hover:bg-white/5 transition-colors">
-                            <span class="flex items-center gap-3"><span class="w-1.5 h-6 bg-blue-500 rounded-full"></span>設定したアバターが変わってしまった</span>
-                            <i class="fas fa-chevron-down text-gray-500 transition-transform group-open:rotate-180"></i>
-                        </summary>
-                        <div class="p-6 pt-0 text-gray-300 text-sm border-t border-white/5 mt-2">
-                            <ul class="list-disc list-inside space-y-2 mt-4">
-                                <li><strong class="text-primary">サインイン (アカウントの作成)をしていない場合</strong>に間を置いて入室するとアバターの情報がリセットされてしまいます。アバター情報を維持したい場合は<strong class="text-red-400">Google アカウントでサインイン</strong>してください。</li>
-                                <li>M-CITYは1ヶ月毎にリンクを更新しており、新しいM-CITYに入る際にアカウントを作っていても稀にアバターが違う場合があります。その場合は<a href="https://app.gather.town/app/G81OpmjDkO1xeP8S/M-CITY%204" target="_blank" class="text-primary hover:underline font-bold">旧M-CITY</a>から入って「新しいM-CITY」に繋がるドアに行けばアバターを引き継ぐことができます。</li>
-                            </ul>
-                        </div>
-                    </details>
-
-                    <!-- Q4 -->
-                    <details class="group bg-[#0a0f1e] rounded-xl border border-white/5 overflow-hidden open:bg-white/5 transition-all">
-                        <summary class="flex items-center justify-between p-6 cursor-pointer font-bold text-white hover:bg-white/5 transition-colors">
-                            <span class="flex items-center gap-3"><span class="w-1.5 h-6 bg-purple-500 rounded-full"></span>スマホ・タブレットで毎回サインアウト(ログアウト)状態になる</span>
-                            <i class="fas fa-chevron-down text-gray-500 transition-transform group-open:rotate-180"></i>
-                        </summary>
-                        <div class="p-6 pt-0 text-gray-300 text-sm border-t border-white/5 mt-2">
-                            <p class="mt-4 mb-4">本来は自分でサインアウトしない限りはサインインしたままの状態ですがiPhone の場合<strong class="text-primary">プライベートブラウズ</strong>、android の場合<strong class="text-primary">シークレットモード</strong>になっているとサインインした状態を維持することができません。</p>
-                            <p class="mb-2 font-bold text-primary">通常モードに戻す方法：</p>
-                            <div class="flex flex-col gap-1 text-xs">
-                                <a href="https://support.apple.com/ja-jp/105030" target="_blank" class="text-gray-300 hover:text-white underline">・iPhone（Safariでプライベートブラウズをオフにする）：Appleサポート</a>
-                                <a href="https://support.google.com/chrome/answer/95464?co=GENIE.Platform%3DAndroid&hl=ja" target="_blank" class="text-gray-300 hover:text-white underline">・Android（Chromeでシークレットモードを終了する）：Googleサポート</a>
-                            </div>
-                        </div>
-                    </details>
-                </div>
-            </div>
-        </section>
-
-        <!-- オープンチャット -->
-        <section id="openchat" class="py-24 relative overflow-hidden z-10">
-            <div class="absolute inset-0 bg-gradient-to-r from-green-900/10 to-transparent pointer-events-none"></div>
-            <div class="container mx-auto px-4 lg:px-8 relative z-10">
-                <div class="glass-panel p-10 md:p-14 rounded-[3rem] border border-green-500/20 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
-                    <div class="md:w-1/3 text-center">
-                        <div class="relative inline-block group">
-                            <div class="absolute inset-0 bg-green-500 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                            <img src="https://i.imgur.com/HgaxHrF.png" alt="QRコード" class="relative w-56 h-56 rounded-2xl border-4 border-green-500/30 shadow-2xl bg-white" onerror="this.onerror=null;this.src='https://placehold.co/224x224/064e3b/34d399?text=QR+Code';">
-                        </div>
-                    </div>
-                    <div class="md:w-2/3 text-left space-y-6">
-                        <h2 class="text-3xl font-bold text-white flex items-center gap-4">
-                            <i class="fab fa-line text-green-400 text-5xl"></i>
-                            呼びかけ・質問用LINEオープンチャット
-                        </h2>
-                        <p class="text-lg text-gray-300 leading-relaxed">こちらのオープンチャットは主にM-CITYに入った事を伝えたり誰か他に参加者を呼びかける時などに使ってください。</p>
-                        
-                        <div class="bg-black/40 p-6 rounded-2xl border-l-4 border-primary">
-                            <p class="text-gray-300">
-                                例：<br>
-                                ゲームセンターで遊んでます。誰か一緒に遊びませんか?<br>
-                                21時から○○の動画を観ます。一緒に見てくれる方募集してます♪
-                            </p>
-                        </div>
-                        
-                        <p class="text-gray-300">他にも質問や初めましての挨拶も OK です！</p>
-                        <p class="font-bold text-amber-300 border-l-4 border-amber-300 pl-3">※M-CITYと関係のない内容の雑談は極力控えるようお願いします。</p>
-                        
-                        <div class="pt-4">
-                            <p class="mb-3 text-sm text-gray-400">スマートフォンからの参加はこちら↓</p>
-                            <a href="https://line.me/ti/g2/OCm8LqxaDR0J9XlSColRKB9p7xA14dD7RRndpw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" rel="noopener noreferrer" 
-                               class="inline-flex items-center gap-3 bg-[#06c755] hover:bg-[#05b34c] text-white px-8 py-4 rounded-full font-bold shadow-lg shadow-green-900/50 transition-all hover:-translate-y-1">
-                                <i class="fab fa-line text-2xl"></i> オープンチャットに参加
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- AIヘルプ -->
-        <section id="ai-help" class="py-20 relative z-10">
-            <div class="container mx-auto px-4">
-                <div class="glass-panel p-8 rounded-2xl opacity-70 text-center max-w-3xl mx-auto border border-dashed border-white/20">
-                    <h2 class="text-xl font-bold mb-4 text-gray-300 flex items-center justify-center gap-3">
-                        <i class="fas fa-robot"></i> M-CITY AIヘルプセンター 詳細
-                    </h2>
-                    <p class="text-sm text-gray-400">
-                        M-CITYに関する質問に自動で回答する「M-CITY AIヘルプセンター」は現在開発中です。完成まで今しばらくお待ちください。
-                    </p>
-                </div>
-            </div>
-        </section>
-
+      <section id="cta" class="cta section-shell">
+        <div class="cta-card">
+          <p class="section-kicker">はじめの一歩</p>
+          <h2>まずは、気になるところから入ってみる。</h2>
+          <p>
+            保存方法をひとつ決めておけば、次回からは迷いません。
+            M-CITYは、あなたのペースでふらっと立ち寄れる街です。
+          </p>
+          <div class="cta-actions">
+            <a class="button button-primary" href="#guide">アクセスガイドを見る</a>
+            <a class="button button-secondary" href="#about">M-CITYってなに？を見る</a>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <footer class="bg-[#02040a] border-t border-white/10 py-12 mt-12 relative z-10">
-        <div class="container mx-auto px-4 text-center">
-            <div class="flex flex-wrap justify-center gap-8 mb-8 text-sm font-bold text-gray-500">
-                <a href="#entry" class="hover:text-primary transition-colors">M-CITY入口</a>
-                <a href="#how-to-use" class="hover:text-primary transition-colors">利用方法</a>
-                <a href="#troubleshooting" class="hover:text-primary transition-colors">Q&A</a>
-            </div>
-            <p class="font-orbitron text-xs tracking-wider text-gray-700">&copy; M-CITY. All rights reserved.</p>
-        </div>
+    <footer class="site-footer">
+      <p>M-CITY - あなたのもう一つの居場所</p>
+      <span>Powered by OFFICE-M</span>
     </footer>
-
-    <script>
-        // モバイルメニュー制御
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const icon = menuBtn.querySelector('i');
-
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            if (mobileMenu.classList.contains('hidden')) {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            } else {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            }
-        });
-
-        // リンククリックでメニュー閉じる
-        document.querySelectorAll('#mobile-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            });
-        });
-
-        // コピー機能
-        window.copyMCityLink = function() {
-            const url = 'https://app.gather.town/app/O7T3B4ViTemCks4d/M-CITY%205';
-            const msg = document.getElementById('copy-message');
-
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(url).then(showSuccess).catch(showError);
-            } else {
-                const textArea = document.createElement("textarea");
-                textArea.value = url;
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    showSuccess();
-                } catch (err) {
-                    showError();
-                }
-                document.body.removeChild(textArea);
-            }
-
-            function showSuccess() {
-                msg.classList.remove('hidden');
-                setTimeout(() => msg.classList.add('hidden'), 3000);
-            }
-            function showError() {
-                alert('コピーに失敗しました');
-            }
-        };
-        
-        // ヘッダースクロール効果
-        const header = document.getElementById('main-header');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.classList.add('bg-[#02040a]/95', 'shadow-2xl');
-                header.classList.remove('bg-[#02040a]/80');
-            } else {
-                header.classList.remove('bg-[#02040a]/95', 'shadow-2xl');
-                header.classList.add('bg-[#02040a]/80');
-            }
-        });
-    </script>
-</body>
+  </body>
 </html>
