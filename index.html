@@ -3,89 +3,197 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Blob Chain</title>
+    <title>M-CITYへようこそ</title>
     <meta
       name="description"
-      content="A browser-based falling color chain puzzle game."
+      content="M-CITYのトップページ。簡単アクセスガイドと、M-CITYとは何かをわかりやすく紹介します。"
     >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-      rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='26' fill='%232dd4bf'/%3E%3Ccircle cx='23' cy='22' r='7' fill='%23fff' fill-opacity='.7'/%3E%3C/svg%3E"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Orbitron:wght@700;900&display=swap"
+      rel="stylesheet"
     >
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <main class="app-shell">
-      <section class="game-stage" aria-label="Blob Chain play field">
-        <canvas id="gameCanvas" width="720" height="1440"></canvas>
-        <div id="statusOverlay" class="status-overlay">
-          <strong id="statusTitle">Blob Chain</strong>
-          <span id="statusText">Ready</span>
-          <button class="primary-action" type="button" data-action="start">
-            Start
-          </button>
+    <div class="bg-orb bg-orb-a"></div>
+    <div class="bg-orb bg-orb-b"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="M-CITY トップへ戻る">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">M-CITY</span>
+      </a>
+      <nav class="site-nav" aria-label="ページ内移動">
+        <a href="#guide">簡単アクセスガイド</a>
+        <a href="#about">M-CITYってなに？</a>
+        <a href="#cta">はじめかた</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero section-shell">
+        <div class="hero-copy">
+          <p class="eyebrow">M-CITYへようこそ</p>
+          <h1>M-CITY簡単アクセスガイド</h1>
+          <p class="lead">
+            すぐ開けて、迷わず戻れるように。
+            ブックマーク、お気に入り、ホーム画面追加までをまとめて案内します。
+          </p>
+
+          <div class="hero-points" aria-label="このページの見どころ">
+            <span>ブックマーク</span>
+            <span>お気に入り</span>
+            <span>ホーム画面追加</span>
+            <span>M-CITYってなに？</span>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-frame">
+            <img src="assets/mcity/hero-town.png" alt="M-CITYの街の全体図">
+          </div>
+          <div class="hero-note">
+            <strong>オンライン上の街へ、1タップで。</strong>
+            <p>よく使う端末に保存しておくと、次回からのアクセスがぐっと楽になります。</p>
+          </div>
         </div>
       </section>
 
-      <aside class="hud" aria-label="Game status">
-        <header class="brand">
-          <h1>Blob Chain</h1>
-          <p>落ちもの連鎖パズル</p>
-        </header>
+      <section id="guide" class="guide section-shell">
+        <div class="section-heading">
+          <p class="section-kicker">M-CITY簡単アクセスガイド</p>
+          <h2>ブックマーク・お気に入り・画面の追加方法</h2>
+          <p>
+            いつものブラウザから、少しだけ手元に寄せておくための3つの方法です。
+            PCでもスマホでも、あなたの使いやすい形でどうぞ。
+          </p>
+        </div>
 
-        <section class="stat-grid" aria-label="Score board">
-          <div>
-            <span>Score</span>
-            <strong id="scoreValue">0</strong>
-          </div>
-          <div>
-            <span>Best</span>
-            <strong id="bestValue">0</strong>
-          </div>
-          <div>
-            <span>Chain</span>
-            <strong id="chainValue">0</strong>
-          </div>
-          <div>
-            <span>Level</span>
-            <strong id="levelValue">1</strong>
-          </div>
-        </section>
+        <div class="guide-grid">
+          <article class="guide-card guide-card-cyan">
+            <div class="guide-index">01</div>
+            <h3>ブックマークに保存</h3>
+            <p>まずはページをブックマーク。次回からURLを探さず、すぐに開けます。</p>
+            <ul>
+              <li>ブラウザのメニューから「ブックマークに追加」</li>
+              <li>名前は「M-CITY」など覚えやすい表記でOK</li>
+              <li>よく使うフォルダに入れておくとさらに便利</li>
+            </ul>
+          </article>
 
-        <section class="next-panel" aria-label="Next pair">
-          <span>Next</span>
-          <canvas id="nextCanvas" width="220" height="220"></canvas>
-        </section>
+          <article class="guide-card guide-card-magenta">
+            <div class="guide-index">02</div>
+            <h3>お気に入りバーに置く</h3>
+            <p>PCならお気に入りバーに固定して、1クリックでアクセスできます。</p>
+            <ul>
+              <li>お気に入りバーを表示しておく</li>
+              <li>アイコンだけの表示にすると省スペース</li>
+              <li>他のよく使うサイトと並べて管理しやすい</li>
+            </ul>
+          </article>
 
-        <section class="tool-row" aria-label="Game actions">
-          <button type="button" data-action="restart" title="New game" aria-label="New game">
-            &#8635;
-          </button>
-          <button type="button" data-action="pause" title="Pause" aria-label="Pause">
-            &#9208;
-          </button>
-        </section>
+          <article class="guide-card guide-card-lime">
+            <div class="guide-index">03</div>
+            <h3>ホーム画面に追加</h3>
+            <p>スマホならホーム画面に置いて、アプリ感覚で開けます。</p>
+            <ul>
+              <li>共有メニューから「ホーム画面に追加」</li>
+              <li>アイコン名は短くすると見つけやすい</li>
+              <li>毎日使う人にはいちばん相性のいい方法です</li>
+            </ul>
+          </article>
+        </div>
 
-        <section class="touch-pad" aria-label="Touch controls">
-          <button type="button" data-action="left" title="Left" aria-label="Left">
-            &#8592;
-          </button>
-          <button type="button" data-action="rotate" title="Rotate" aria-label="Rotate">
-            &#8635;
-          </button>
-          <button type="button" data-action="right" title="Right" aria-label="Right">
-            &#8594;
-          </button>
-          <button type="button" data-action="soft" title="Down" aria-label="Down">
-            &#8595;
-          </button>
-          <button class="wide" type="button" data-action="drop" title="Drop" aria-label="Drop">
-            Drop
-          </button>
-        </section>
-      </aside>
+        <div class="guide-foot">
+          <div class="guide-foot-copy">
+            <strong>ひとつだけ選ぶなら、まずはブックマーク。</strong>
+            <p>PCとスマホの両方で使うなら、お気に入りバーとホーム画面追加を組み合わせるのがおすすめです。</p>
+          </div>
+          <div class="guide-foot-image">
+            <img src="assets/mcity/event-collage.png" alt="M-CITYの街で過ごす人たちの様子">
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="about section-shell">
+        <div class="section-heading section-heading-wide">
+          <p class="section-kicker">M-CITYってなに？</p>
+          <h2>オンライン上にひとつの「街」をつくったコミュニティ</h2>
+          <p>
+            レトロなRPGのような世界で、アバターを動かしながら雑談したり、作業を並走したり、
+            ちょっとした相談をしたり。SNSでもチャットでもZoomでもない、ちょうど中間の居場所です。
+          </p>
+        </div>
+
+        <div class="about-layout">
+          <div class="about-copy">
+            <div class="quote-box">
+              <span class="quote-mark">“</span>
+              <p>
+                同じ街に住む住民同士が、お互いの時間や距離感を大切にしながら、
+                ゆるくつながっていける場所。
+              </p>
+            </div>
+
+            <div class="feature-list">
+              <div>
+                <span>雑談</span>
+                <p>たまたま近くにいた人と、思いがけない話が始まる。</p>
+              </div>
+              <div>
+                <span>作業</span>
+                <p>誰かがいる気配の中で、ひとり作業も心地よく進む。</p>
+              </div>
+              <div>
+                <span>相談</span>
+                <p>少し勇気を出して、もやもやを言葉にしてみる。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="about-visual">
+            <figure class="about-card about-card-main">
+              <img src="assets/mcity/concept-town.jpeg" alt="M-CITYの街のコンセプト画像">
+            </figure>
+            <div class="about-side">
+              <figure class="about-card about-card-small">
+                <img src="assets/mcity/bar.jpeg" alt="BARエリアのイメージ">
+              </figure>
+              <figure class="about-card about-card-small">
+                <img src="assets/mcity/friend-cafe.jpeg" alt="フレンドカフェエリアのイメージ">
+              </figure>
+              <figure class="about-card about-card-small">
+                <img src="assets/mcity/net-cafe.jpeg" alt="ネットカフェエリアのイメージ">
+              </figure>
+              <figure class="about-card about-card-small">
+                <img src="assets/mcity/secret-base.jpeg" alt="みんなの秘密基地エリアのイメージ">
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="cta" class="cta section-shell">
+        <div class="cta-card">
+          <p class="section-kicker">はじめの一歩</p>
+          <h2>まずは、気になるところから入ってみる。</h2>
+          <p>
+            保存方法をひとつ決めておけば、次回からは迷いません。
+            M-CITYは、あなたのペースでふらっと立ち寄れる街です。
+          </p>
+          <div class="cta-actions">
+            <a class="button button-primary" href="#guide">アクセスガイドを見る</a>
+            <a class="button button-secondary" href="#about">M-CITYってなに？を見る</a>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <script src="game.js" defer></script>
+    <footer class="site-footer">
+      <p>M-CITY - あなたのもう一つの居場所</p>
+      <span>Powered by OFFICE-M</span>
+    </footer>
   </body>
 </html>
