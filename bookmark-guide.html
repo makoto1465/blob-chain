@@ -1,0 +1,567 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>M-CITY ブックマーク・お気に入り登録ガイド</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg: #0b1020;             /* canvas */
+      --fg: #0f172a;             /* base text container bg */
+      --accent-1: #7c3aed;       /* violet */
+      --accent-2: #22c55e;       /* green */
+      --accent-3: #0ea5e9;       /* sky */
+      --ink: #0f172a;            /* text */
+      --muted: #475569;          /* muted text */
+      --ring: rgba(124, 58, 237, .25); /* focus halo */
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: 'Noto Sans JP', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+      line-height: 1.7;
+      background: #0b1220;
+      color: #ffffff;
+      font-size: 18px;
+    }
+
+    /* ====== Adopted from preferred neon/glass design ===== */
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--primary:#00d4ff;--secondary:#ff00ff;--accent:#ffff00;--dark:#0a0e27;--darker:#050714;--light:#ffffff;--glass:rgba(255,255,255,.05);--glass-border:rgba(255,255,255,.1)}
+    body{background:var(--darker);color:var(--light);overflow-x:hidden;position:relative}
+    body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 20% 50%,rgba(0,212,255,.1)0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(255,0,255,.1)0%,transparent 50%),radial-gradient(circle at 40% 20%,rgba(255,255,0,.05)0%,transparent 50%);pointer-events:none;z-index:1}
+    .container{max-width:1400px;margin:0 auto;padding:0 20px;position:relative;z-index:2}
+    .hero{min-height:70vh;display:flex;align-items:center;justify-content:center;position:relative;background:linear-gradient(135deg,var(--dark)0%,var(--darker)100%);overflow:hidden}
+    .hero:before{content:"";position:absolute;width:200%;height:200%;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,212,255,.03)10px,rgba(0,212,255,.03)20px);animation:slide 20s linear infinite}
+    @keyframes slide{0%{transform:translate(0,0)}100%{transform:translate(50px,50px)}}
+    .hero-content{text-align:center;position:relative;z-index:2;animation:fadeInUp 1s ease-out}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .hero h1{font-family:'Orbitron',sans-serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:900;margin-bottom:1.5rem;background:linear-gradient(135deg,#00d4ff,#1e90ff,#0066ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:0 0 80px rgba(0,212,255,.5);animation:glow 2s ease-in-out infinite alternate}
+    @keyframes glow{from{filter:brightness(1)}to{filter:brightness(1.2)}}
+    .hero-subtitle{font-size:clamp(1.2rem,3vw,1.8rem);color:rgba(255,255,255,.9);margin-bottom:3rem;font-weight:300}
+    .section{padding:5rem 0;position:relative}
+    .section-title{font-family:'Orbitron',sans-serif;font-size:clamp(2rem,4vw,3rem);text-align:center;margin-bottom:4rem;position:relative;display:inline-block;width:100%;color:#fff}
+    .section-title:after{content:"";position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);width:100px;height:4px;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:2px;box-shadow:0 0 20px rgba(0,212,255,.5)}
+    .step-card{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--glass-border);border-radius:20px;padding:2rem;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.175,.885,.32,1.275)}
+    .step-card:before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--primary),var(--secondary));transform:scaleX(0);transform-origin:left;transition:transform .4s ease}
+    .step-card:hover:before{transform:scaleX(1)}
+    .step-card:hover{transform:translateY(-5px) rotateX(5deg);box-shadow:0 20px 40px rgba(0,212,255,.2),0 0 60px rgba(255,0,255,.1);border-color:rgba(0,212,255,.3)}
+    .step-number{width:60px;height:60px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:1.5rem;font-weight:900;margin-right:1.5rem;flex-shrink:0;box-shadow:0 0 30px rgba(0,212,255,.5),inset 0 0 20px rgba(255,255,255,.2);animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    .info-badge{background:linear-gradient(135deg,rgba(0,212,255,.2),rgba(255,0,255,.2));border:1px solid rgba(0,212,255,.3);border-radius:12px;padding:1rem;margin-top:1rem;backdrop-filter:blur(5px)}
+    .warning-badge{background:linear-gradient(135deg,rgba(255,193,7,.2),rgba(255,87,34,.2));border:1px solid rgba(255,193,7,.3);border-radius:12px;padding:1rem;margin-top:1rem;backdrop-filter:blur(5px)}
+    .cta-button{display:inline-flex;align-items:center;gap:0.75rem;padding:1.5rem 3rem;background:linear-gradient(135deg,var(--primary),var(--secondary));color:var(--light);text-decoration:none;border-radius:50px;font-size:1.4rem;font-weight:700;position:relative;overflow:hidden;transition:all .3s ease;box-shadow:0 4px 15px rgba(0,212,255,.4),0 0 50px rgba(0,212,255,.2)}
+    .cta-button:before{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transition:left .5s ease}
+    .cta-button:hover:before{left:100%}
+    .cta-button:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 8px 25px rgba(0,212,255,.6),0 0 70px rgba(0,212,255,.4)}
+    footer{background:linear-gradient(180deg,transparent,var(--darker));padding:3rem 0;text-align:center;margin-top:5rem;border-top:1px solid var(--glass-border)}
+    /* Browser specific styling */
+    .browser-card{background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--glass-border);border-radius:15px;padding:1.5rem;margin-bottom:1.5rem;transition:all .3s ease}
+    .browser-card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,212,255,.2)}
+    .browser-icon{width:40px;height:40px;margin-right:1rem;border-radius:8px}
+    /* Senior-friendly styling */
+    .senior-friendly{font-size:1.1rem;line-height:1.8}
+    .large-text{font-size:1.3rem;font-weight:600}
+    .step-highlight{background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,140,0,.15));border:2px solid rgba(255,215,0,.4);border-radius:10px;padding:1rem;margin:1rem 0}
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+</head>
+<body class="antialiased text-white">
+  <!-- HERO -->
+  <header class="hero relative">
+    <div class="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 relative z-[1]">
+      <div class="text-center text-white">
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight drop-shadow-sm mb-6">
+          <i class="fas fa-bookmark mr-3"></i>
+          M-CITY 簡単アクセスガイド
+        </h1>
+        <p class="text-lg md:text-xl/9 opacity-95 mb-8">
+          ブックマーク・お気に入り・ホーム画面追加の方法<br>
+          <span class="text-base opacity-90">画像付きで詳しく説明いたします</span>
+        </p>
+        
+        <!-- Navigation -->
+        <div class="mb-8 flex justify-center space-x-4 flex-wrap">
+          <a href="index.html" class="inline-block px-4 py-2 border border-white/30 rounded-lg hover:bg-white/10 transition-all mb-2">
+            <i class="fas fa-home mr-2"></i>メインページに戻る
+          </a>
+          <div class="flex flex-col items-center gap-2">
+            <a href="https://app.gather.town/app/Pynjo1f7XEKmrqpV/M-CITY%2010" target="_blank" class="cta-button mb-2">
+              <i class="fas fa-dungeon"></i>
+              M-CITY入口
+            </a>
+            <button onclick="copyMCityLink()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
+              <i class="fas fa-copy mr-1"></i>URLをコピー
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- なぜブックマークが必要？ -->
+      <section id="why-bookmark" class="section py-12">
+        <h2 class="section-title">
+          <i class="fas fa-question-circle mr-3 text-blue-500"></i>
+          なぜブックマーク・お気に入りに登録するの？
+        </h2>
+
+        <div class="step-card senior-friendly">
+          <div class="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="text-xl font-bold text-white mb-4">
+                <i class="fas fa-link text-green-400 mr-2"></i>
+                毎月URLが変わります
+              </h3>
+              <ul class="space-y-3 text-white/90">
+                <li class="flex items-start">
+                  <i class="fas fa-check text-green-400 mr-2 mt-1"></i>
+                  <span>ここさえブックマークしておけばいつでも行けます</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-check text-green-400 mr-2 mt-1"></i>
+                  <span>長いURLを覚える必要がない</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-check text-green-400 mr-2 mt-1"></i>
+                  <span>ワンクリックでM-CITYに入れる</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-white mb-4">
+                <i class="fas fa-mobile-alt text-blue-400 mr-2"></i>
+                スマホならもっと便利
+              </h3>
+              <ul class="space-y-3 text-white/90">
+                <li class="flex items-start">
+                  <i class="fas fa-check text-blue-400 mr-2 mt-1"></i>
+                  <span>ホーム画面にアプリのように配置</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-check text-blue-400 mr-2 mt-1"></i>
+                  <span>他のアプリと同じように起動</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-check text-blue-400 mr-2 mt-1"></i>
+                  <span>ブラウザを開く必要がない</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PC版ブラウザ -->
+      <section id="pc-browsers" class="section py-12">
+        <h2 class="section-title">
+          <i class="fas fa-desktop mr-3 text-purple-500"></i>
+          パソコンでのブックマーク・お気に入り登録
+        </h2>
+
+        <!-- Microsoft Edge -->
+        <div class="browser-card">
+          <div class="flex items-center mb-4">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzAwN0FDQyIvPgo8cGF0aCBkPSJNMjggMTJIMTJDMTAuOSAxMiAxMCAxMi45IDEwIDE0VjI2QzEwIDI3LjEgMTAuOSAyOCAxMiAyOEgyOEMyOS4xIDI4IDMwIDI3LjEgMzAgMjZWMTRDMzAgMTIuOSAyOS4xIDEyIDI4IDEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+" alt="Microsoft Edge" class="browser-icon" />
+            <div>
+              <h3 class="large-text text-white">Microsoft Edge</h3>
+              <p class="text-white/70">Windows標準ブラウザ</p>
+            </div>
+          </div>
+          
+          <div class="space-y-4 senior-friendly">
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full mr-2">1</span>
+                M-CITYのページを開く
+              </h4>
+              <p class="text-white/90">まず、M-CITYのページをEdgeで開いてください。</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full mr-2">2</span>
+                ★マークをクリック
+              </h4>
+              <p class="text-white/90">アドレスバー（URLが表示されている場所）の右端にある<strong>★（星マーク）</strong>をクリックしてください。</p>
+              <div class="mt-3 bg-gray-800 p-3 rounded-lg">
+                <img src="https://www.fmworld.net/cs/azbyclub/qanavi/private/202209/1700000003/069.gif" alt="Edge星マーク" class="mx-auto rounded border" style="max-width: 700px; width: 100%;" />
+                <p class="text-center text-sm text-white/70 mt-2">アドレスバーの右端の★マークをクリック</p>
+              </div>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full mr-2">3</span>
+                お気に入りに追加
+              </h4>
+              <p class="text-white/90">「お気に入りに追加」というウィンドウが表示されるので、<strong>「追加」ボタン</strong>をクリックしてください。</p>
+              <div class="mt-3 bg-gray-800 p-3 rounded-lg">
+                <img src="https://www.fmworld.net/cs/azbyclub/qanavi/private/202209/1700000003/077.gif" alt="Edge追加ダイアログ" class="mx-auto rounded border" style="max-width: 700px; width: 100%;" />
+                <p class="text-center text-sm text-white/70 mt-2">「追加」ボタンをクリックして完了</p>
+              </div>
+            </div>
+
+            <div class="info-badge">
+              <i class="fas fa-lightbulb mr-2"></i>
+              <strong>確認方法：</strong>画面上部の「お気に入り」メニューや、★マークの隣にある「お気に入り」ボタンから確認できます。
+            </div>
+          </div>
+        </div>
+
+        <!-- Google Chrome -->
+        <div class="browser-card">
+          <div class="flex items-center mb-4">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTIiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjYiIGZpbGw9IiMzNEE4NTMiLz4KPC9zdmc+" alt="Google Chrome" class="browser-icon" />
+            <div>
+              <h3 class="large-text text-white">Google Chrome</h3>
+              <p class="text-white/70">世界で最も使われているブラウザ</p>
+            </div>
+          </div>
+          
+          <div class="space-y-4 senior-friendly">
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-red-500 text-white px-3 py-1 rounded-full mr-2">1</span>
+                M-CITYのページを開く
+              </h4>
+              <p class="text-white/90">まず、M-CITYのページをChromeで開いてください。</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-red-500 text-white px-3 py-1 rounded-full mr-2">2</span>
+                ★マークをクリック
+              </h4>
+              <p class="text-white/90">アドレスバーの右端にある<strong>★（星マーク）</strong>をクリックしてください。星が黄色になります。</p>
+              <div class="mt-3 bg-gray-800 p-3 rounded-lg">
+                <img src="https://fushimiinari-guide.com/wp-content/uploads/bookmark_002_20190201.jpg" alt="Chrome星マーク" class="mx-auto rounded border" style="max-width: 700px; width: 100%;" />
+                <p class="text-center text-sm text-white/70 mt-2">アドレスバーの右端の★マークをクリック</p>
+              </div>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-red-500 text-white px-3 py-1 rounded-full mr-2">3</span>
+                ブックマークに追加完了
+              </h4>
+              <p class="text-white/90">「ブックマークに追加しました」というメッセージが表示されれば完了です。</p>
+              <div class="mt-3 bg-gray-800 p-3 rounded-lg">
+                <img src="https://serai.jp/wp-content/uploads/2023/10/image10-6.jpg" alt="Chromeブックマーク追加完了" class="mx-auto rounded border" style="max-width: 700px; width: 100%;" />
+                <p class="text-center text-sm text-white/70 mt-2">★マークが青色になればブックマーク完了</p>
+              </div>
+            </div>
+
+            <div class="info-badge">
+              <i class="fas fa-lightbulb mr-2"></i>
+              <strong>確認方法：</strong>画面右上の「⋮」（三点リーダー）→「ブックマーク」から確認できます。
+            </div>
+          </div>
+        </div>
+
+        <!-- Safari (Mac) -->
+        <div class="browser-card">
+          <div class="flex items-center mb-4">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiMwMDdBRkYiLz4KPHBhdGggZD0iTTIwIDhMMjQgMTZMMTYgMTZMMjAgOFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yMCAzMkwxNiAyNEwyNCAyNEwyMCAzMloiIGZpbGw9IndoaXRlIi8+Cjxwb2x5Z29uIHBvaW50cz0iMjAsMjAgMjQsMTYgMTYsMTYiIGZpbGw9IiNGRjAwMDAiLz4KPC9zdmc+" alt="Safari" class="browser-icon" />
+            <div>
+              <h3 class="large-text text-white">Safari（Mac）</h3>
+              <p class="text-white/70">Apple Mac標準ブラウザ</p>
+            </div>
+          </div>
+          
+          <div class="space-y-4 senior-friendly">
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full mr-2">1</span>
+                M-CITYのページを開く
+              </h4>
+              <p class="text-white/90">まず、M-CITYのページをSafariで開いてください。</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full mr-2">2</span>
+                ブックマークメニューを開く
+              </h4>
+              <p class="text-white/90">画面上部のメニューから<strong>「ブックマーク」</strong>をクリックして、<strong>「ブックマークに追加」</strong>を選択してください。</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full mr-2">3</span>
+                追加完了
+              </h4>
+              <p class="text-white/90">ブックマーク名を確認して<strong>「追加」ボタン</strong>をクリックすれば完了です。</p>
+            </div>
+
+            <div class="info-badge">
+              <i class="fas fa-lightbulb mr-2"></i>
+              <strong>ショートカット：</strong>「Command + D」キーでも素早くブックマークに追加できます。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- スマートフォン版 -->
+      <section id="smartphone" class="section py-12">
+        <h2 class="section-title">
+          <i class="fas fa-mobile-alt mr-3 text-green-500"></i>
+          スマートフォンでの登録方法
+        </h2>
+
+        <!-- iPhone Safari -->
+        <div class="browser-card">
+          <div class="flex items-center mb-4">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzAwN0FGRiIvPgo8cGF0aCBkPSJNMjAgOEwyNCAyMEgxNkwyMCA4WiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTIwIDMyTDE2IDIwSDI0TDIwIDMyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+" alt="iPhone Safari" class="browser-icon" />
+            <div>
+              <h3 class="large-text text-white">iPhone（Safari）</h3>
+              <p class="text-white/70">ホーム画面に追加できます</p>
+            </div>
+          </div>
+          
+          <div class="space-y-4 senior-friendly">
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full mr-2">1</span>
+                M-CITYのページを開く
+              </h4>
+              <p class="text-white/90">SafariでM-CITYのページを開いてください。</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full mr-2">2</span>
+                共有ボタンをタップ
+              </h4>
+              <p class="text-white/90">画面下部の<strong>□（四角に上矢印）の共有ボタン</strong>をタップしてください。</p>
+              <div class="mt-3 bg-gray-800 p-3 rounded-lg flex justify-center">
+                <img src="https://imobie-resource.com/jp/support/img/add-website-icon-to-iphone-home-screen-1.png" alt="iPhone Safari 共有ボタン" class="rounded border" style="max-width: 600px; width: 100%;" />
+              </div>
+              <p class="text-center text-sm text-white/70 mt-2">画面下部中央の共有ボタン（□↑）をタップ</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full mr-2">3</span>
+                「ホーム画面に追加」をタップ
+              </h4>
+              <p class="text-white/90">メニューの中から<strong>「ホーム画面に追加」</strong>を探してタップしてください。</p>
+              <div class="mt-3 bg-gray-800 p-3 rounded-lg flex justify-center">
+                <img src="https://s.widget-club.com/web/no2/e733ba56dded5ffaf4d50e480452291e.png" alt="iPhone ホーム画面に追加" class="rounded border" style="max-width: 600px; width: 100%;" />
+              </div>
+              <p class="text-center text-sm text-white/70 mt-2">「ホーム画面に追加」をタップ</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full mr-2">4</span>
+                追加完了
+              </h4>
+              <p class="text-white/90">アプリ名を確認して<strong>「追加」</strong>をタップすれば、ホーム画面にM-CITYのアイコンが表示されます。</p>
+              <div class="mt-3 bg-gray-800 p-3 rounded-lg flex justify-center">
+                <img src="https://blog.curio-shiki.com/wp-content/uploads/2020/09/iphone-add-to-home.jpg" alt="ホーム画面アイコン" class="rounded border" style="max-width: 600px; width: 100%;" />
+              </div>
+              <p class="text-center text-sm text-white/70 mt-2">ホーム画面にアイコンが追加される</p>
+            </div>
+
+            <div class="info-badge">
+              <i class="fas fa-star mr-2"></i>
+              <strong>便利：</strong>これで他のアプリと同じようにM-CITYを起動できます！
+            </div>
+          </div>
+        </div>
+
+        <!-- iPhone Chrome -->
+        <div class="browser-card">
+          <div class="flex items-center mb-4">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTIiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjYiIGZpbGw9IiMzNEE4NTMiLz4KPC9zdmc+" alt="iPhone Chrome" class="browser-icon" />
+            <div>
+              <h3 class="large-text text-white">iPhone（Chrome）</h3>
+              <p class="text-white/70">Chromeアプリでの登録方法</p>
+            </div>
+          </div>
+          
+          <div class="space-y-4 senior-friendly">
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-red-500 text-white px-3 py-1 rounded-full mr-2">1</span>
+                M-CITYのページを開く
+              </h4>
+              <p class="text-white/90">ChromeアプリでM-CITYのページを開いてください。</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-red-500 text-white px-3 py-1 rounded-full mr-2">2</span>
+                メニューボタンをタップ
+              </h4>
+              <p class="text-white/90">画面右上の<strong>「⋯」（三点リーダー）</strong>をタップしてください。</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-red-500 text-white px-3 py-1 rounded-full mr-2">3</span>
+                「ブックマークに追加」をタップ
+              </h4>
+              <p class="text-white/90">メニューから<strong>「ブックマークに追加」</strong>を見つけてタップしてください。</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-red-500 text-white px-3 py-1 rounded-full mr-2">4</span>
+                保存完了
+              </h4>
+              <p class="text-white/90">ブックマーク名を確認して<strong>「保存」</strong>をタップすれば完了です。</p>
+            </div>
+
+            <div class="info-badge">
+              <i class="fas fa-lightbulb mr-2"></i>
+              <strong>確認方法：</strong>メニューの「ブックマーク」から確認できます。
+            </div>
+          </div>
+        </div>
+
+        <!-- Android Chrome -->
+        <div class="browser-card">
+          <div class="flex items-center mb-4">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzNCREE0QyIvPgo8cGF0aCBkPSJNMjggMTJIMTJDMTAuOSAxMiAxMCAxMi45IDEwIDE0VjI2QzEwIDI3LjEgMTAuOSAyOCAxMiAyOEgyOEMyOS4xIDI4IDMwIDI3LjEgMzAgMjZWMTRDMzAgMTIuOSAyOS4xIDEyIDI4IDEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+" alt="Android Chrome" class="browser-icon" />
+            <div>
+              <h3 class="large-text text-white">Android（Chrome）</h3>
+              <p class="text-white/70">ホーム画面に追加できます</p>
+            </div>
+          </div>
+          
+          <div class="space-y-4 senior-friendly">
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-green-500 text-white px-3 py-1 rounded-full mr-2">1</span>
+                M-CITYのページを開く
+              </h4>
+              <p class="text-white/90">ChromeアプリでM-CITYのページを開いてください。</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-green-500 text-white px-3 py-1 rounded-full mr-2">2</span>
+                メニューボタンをタップ
+              </h4>
+              <p class="text-white/90">画面右上の<strong>「⋮」（三点リーダー）</strong>をタップしてください。</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-green-500 text-white px-3 py-1 rounded-full mr-2">3</span>
+                「ホーム画面に追加」をタップ
+              </h4>
+              <p class="text-white/90">メニューから<strong>「ホーム画面に追加」</strong>を探してタップしてください。</p>
+            </div>
+
+            <div class="step-highlight">
+              <h4 class="font-bold text-white mb-3">
+                <span class="bg-green-500 text-white px-3 py-1 rounded-full mr-2">4</span>
+                追加完了
+              </h4>
+              <p class="text-white/90">アプリ名を確認して<strong>「追加」</strong>をタップすれば、ホーム画面にM-CITYのアイコンが表示されます。</p>
+            </div>
+
+            <div class="info-badge">
+              <i class="fas fa-star mr-2"></i>
+              <strong>便利：</strong>これで他のアプリと同じようにM-CITYを起動できます！
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- よくある質問 -->
+      <section id="faq" class="section py-12">
+        <h2 class="section-title">
+          <i class="fas fa-question-circle mr-3 text-yellow-500"></i>
+          よくある質問
+        </h2>
+
+        <div class="space-y-6">
+          <div class="step-card">
+            <h4 class="text-lg font-bold text-white mb-3">
+              <i class="fas fa-question text-yellow-400 mr-2"></i>
+              ブックマークが見つからない
+            </h4>
+            <div class="space-y-2 text-white/90 senior-friendly">
+              <p><strong>PC（Chrome・Edge）：</strong>画面上部のブックマークバーを確認するか、「⋮」メニュー→「ブックマーク」から確認</p>
+              <p><strong>iPhone：</strong>ホーム画面やSafariのブックマークメニューを確認</p>
+              <p><strong>Android：</strong>ホーム画面やChromeのブックマークメニューを確認</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <h4 class="text-lg font-bold text-white mb-3">
+              <i class="fas fa-question text-yellow-400 mr-2"></i>
+              ホーム画面に追加したのに見つからない
+            </h4>
+            <div class="space-y-2 text-white/90 senior-friendly">
+              <p>ホーム画面の他のページ（左右にスワイプ）を確認してみてください。</p>
+              <p>アプリドロワー（すべてのアプリが表示される場所）も確認してみてください。</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <h4 class="text-lg font-bold text-white mb-3">
+              <i class="fas fa-question text-yellow-400 mr-2"></i>
+              削除したい場合は？
+            </h4>
+            <div class="space-y-2 text-white/90 senior-friendly">
+              <p><strong>PC：</strong>ブックマークを右クリック→「削除」</p>
+              <p><strong>スマホ：</strong>アイコンを長押し→「削除」または「アンインストール」</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-white py-10 px-4 mt-10">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="flex justify-center space-x-6 mb-4 flex-wrap">
+        <a href="index.html" class="text-sky-400 hover:underline mb-2">
+          <i class="fas fa-home mr-1"></i>メインページ
+        </a>
+      </div>
+      <p class="text-slate-300 mb-2">
+        <i class="fas fa-bookmark mr-2"></i>
+        一度設定すれば、毎回簡単にM-CITYにアクセスできます
+      </p>
+      <p class="text-slate-400 text-sm">
+        © M-CITY. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Copy M-CITY link function
+    function copyMCityLink() {
+      const mcityUrl = 'https://app.gather.town/app/Pynjo1f7XEKmrqpV/M-CITY%2010';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(mcityUrl).then(function() {
+          alert('リンクをコピーしました！');
+        }).catch(function(err) {
+          alert('リンクをコピーできませんでした。');
+        });
+      } else {
+        alert('リンクをコピーできませんでした。');
+      }
+    }
+  </script>
+</body>
+</html>
