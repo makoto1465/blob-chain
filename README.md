@@ -1,25 +1,26 @@
-# M-CITY
+# Blob Chain
 
-M-CITY のトップページを再現した静的サイトです。
+Blob Chain is a small browser game inspired by falling color-chain puzzles. Drop pairs of blobs, connect four or more of the same color, and set up chain reactions for bigger scores.
 
-## 内容
+## Play locally
 
-- M-CITY へようこそ
-- M-CITY 簡単アクセスガイド
-- M-CITY ってなに？
-
-プロフィールと Slack 紹介セクションは含めていません。
-
-## ローカルで確認
-
-`index.html` をブラウザで開くか、簡易サーバーを立てて確認できます。
+Open `index.html` in a browser, or run a tiny local server from this folder:
 
 ```powershell
 python -m http.server 4173 --bind 127.0.0.1
 ```
 
-そのあと `http://127.0.0.1:4173` を開いてください。
+Then visit `http://127.0.0.1:4173`.
 
-## 画像
+## Controls
 
-ページ内のビジュアルは、M-CITY 関連のキャプチャ資産をもとにしています。
+- Left / Right: move
+- Up / Z / X: rotate
+- Down: soft drop
+- Space: hard drop
+- P: pause
+- Enter: start or retry
+
+## Deploy
+
+This project is static HTML, CSS, and JavaScript. Vercel can deploy it directly from the repository root.
