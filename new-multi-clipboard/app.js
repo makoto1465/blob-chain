@@ -26,7 +26,8 @@
     dir: 'new-multi-clipboard',
     file: 'new-multi-clipboard/data.js',
     vercelScope: 'makoto1465s-projects',
-    site: 'https://new-multi-clipboard.vercel.app/'
+    site: 'https://new-multi-clipboard-makoto1465s-projects.vercel.app/',
+    publicAlias: 'new-multi-clipboard.vercel.app'
   };
 
   /* ---------------------------------------------------------------- 保存領域
@@ -1219,10 +1220,26 @@
     L.push('npx vercel@latest deploy --prod --yes --scope ' + REPO.vercelScope);
     L.push('```');
     L.push('');
-    L.push('- 公開URL：' + REPO.site);
+    L.push('- URL：' + REPO.site + '（Vercelログイン必須。個人用サイトです）');
     L.push('- `' + REPO.dir + '/.vercel/` にプロジェクトのひも付けが入っています。消さないでください。');
     L.push('- Vercel にログインしていない場合は、勝手にアカウントを作らず、その旨を報告して止まってください。');
-    L.push('- デプロイ後に公開URLを開き、件数と対象クリップが依頼どおりになっているか目視で確認してください。');
+    L.push('');
+    L.push('### デプロイ後に必ずやること（重要・セキュリティ）');
+    L.push('');
+    L.push('このサイトには個人情報を含むクリップがあるため、**誰でも見られるURLを持たせていません**。');
+    L.push('本番デプロイをすると `' + REPO.publicAlias + '` という**無認証で見えるエイリアスが自動で復活する場合があります**。');
+    L.push('デプロイ後に必ず確認し、復活していたら削除してください。');
+    L.push('');
+    L.push('```bash');
+    L.push('curl -s -o /dev/null -w "%{http_code}\\n" https://' + REPO.publicAlias + '/');
+    L.push('# 200 が返ったら公開されてしまっているので、下を実行して消す');
+    L.push('npx vercel@latest alias rm ' + REPO.publicAlias + ' --yes --scope ' + REPO.vercelScope);
+    L.push('# もう一度叩いて 404 になることを確認する');
+    L.push('```');
+    L.push('');
+    L.push('- 正しい状態：`' + REPO.publicAlias + '` は **404**、`' + REPO.site.replace(/^https?:\/\/|\/$/g, '') + '` は **302**（ログインへリダイレクト）。');
+    L.push('- 302 が返るのが正常です。エラーだと思って「保護を外して200にする」ことは**絶対にしないでください**。');
+    L.push('- 中身の目視確認はブラウザのログインが必要なため、依頼者が行います。あなたは上の件数の検算までで構いません。');
     L.push('');
     L.push('');
     L.push('## 最後に報告すること');
@@ -1230,7 +1247,7 @@
     L.push('- 削除した id / 変更した id / 追加した id の一覧');
     L.push('- 反映前と反映後の件数');
     L.push('- push したコミットのハッシュ');
-    L.push('- デプロイ後の公開URL（本番）');
+    L.push('- `' + REPO.publicAlias + '` が 404 のままか（復活していたら消したかどうか）');
     L.push('- 判断に迷って手を止めた点があれば、その内容');
     L.push('');
     L.push('<!-- このプロンプトは「新マルチクリップボード」の申請リストから自動生成されました -->');

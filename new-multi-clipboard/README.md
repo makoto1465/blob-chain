@@ -123,7 +123,7 @@ node -e "const h=require('http'),f=require('fs'),p=require('path');h.createServe
 
 ## デプロイ
 
-公開先： **https://new-multi-clipboard.vercel.app/**
+URL： **https://new-multi-clipboard-makoto1465s-projects.vercel.app/**（Vercelログイン必須）
 リポジトリ： https://github.com/makoto1465/blob-chain （`new-multi-clipboard/`）
 
 ```bash
@@ -132,6 +132,32 @@ npx vercel@latest deploy --prod --yes --scope makoto1465s-projects
 
 `.vercel/` にプロジェクトのひも付けが入っています（gitには入れていません）。
 GitHub への push では自動デプロイされないので、上のコマンドまで実行してください。
+
+### 公開エイリアスを持たせない運用（重要）
+
+個人情報を含むクリップがあるため、**無認証で見えるURLを意図的に消しています**。
+
+Vercel の Hobby プランでは、Deployment Protection の `Standard Protection`（既定でON）は
+本番ドメインを保護しません。本番も保護する `All Deployments` は Pro プランが必要です。
+そこで、自動割り当てされる `new-multi-clipboard.vercel.app` というエイリアス自体を削除し、
+保護対象である `new-multi-clipboard-makoto1465s-projects.vercel.app` だけを使う構成にしています。
+
+**本番デプロイのたびに、このエイリアスが自動で復活する場合があります。** デプロイ後に必ず確認してください。
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" https://new-multi-clipboard.vercel.app/
+# 200 なら公開されているので削除する
+npx vercel@latest alias rm new-multi-clipboard.vercel.app --yes --scope makoto1465s-projects
+```
+
+正しい状態：
+
+| URL | 期待値 |
+| --- | --- |
+| `new-multi-clipboard.vercel.app` | **404**（存在しない） |
+| `new-multi-clipboard-makoto1465s-projects.vercel.app` | **302**（Vercelログインへ） |
+
+302 は正常です。これを「エラー」と誤解して保護を外さないでください。
 
 > **公開前の注意**
 > 「M-CITY参謀AI システムプロンプト」には Googleドライブのフォルダ ID・カレンダー ID・メールアドレスが含まれています（アプリ内でも 🔒 マークが付きます）。
