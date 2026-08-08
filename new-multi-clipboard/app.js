@@ -382,18 +382,25 @@
     if (used) meta.push('使用 ' + used + '回');
     if (hasDraft(item)) meta.push('<span class="draft">✏️ 編集中（未保存）</span>');
     var delReq = findReq('delete', item.id, null);
+    var blockDels = store.reqs.filter(function (r) {
+      return r.kind === 'delete' && r.clipId === item.id && normPart(r.part) !== null;
+    }).length;
     if (delReq) meta.push('<span class="reqd">🗑 削除を申請中</span>');
-    if (store.reqs.some(function (r) { return r.kind === 'edit' && r.clipId === item.id; })) {
-      meta.push('<span class="reqe">📝 変更を申請中</span>');
-    }
+    else if (blockDels) meta.push('<span class="reqd">🗑 ' + blockDels + 'パーツの削除を申請中</span>');
+    if (hasReq('edit', item.id)) meta.push('<span class="reqe">📝 変更を申請中</span>');
     if (item.private) meta.push('<span class="lock">🔒 個人情報あり</span>');
 
     var body;
     if (item.type === 'collection') {
       var show = item.blocks.slice(0, 3);
       body = '<div class="rows">' + show.map(function (b, i) {
-        return '<div class="row"><span class="row-label" title="' + esc(b.label) + '">' + esc(b.label) +
-          '</span><button class="row-copy" data-copyblock="' + i + '">コピー</button></div>';
+        var pending = !!findReq('delete', item.id, i);
+        return '<div class="row' + (pending ? ' pending' : '') + '">' +
+          '<span class="row-label" title="' + esc(b.label) + '">' + esc(b.label) + '</span>' +
+          '<button class="row-copy" data-copyblock="' + i + '">コピー</button>' +
+          '<button class="row-del' + (pending ? ' on' : '') + '" data-reqdelblock="' + i + '" ' +
+            'title="' + (pending ? '削除申請を取り消す' : 'このパーツの削除を申請') + '" aria-label="このパーツの削除を申請">🗑</button>' +
+        '</div>';
       }).join('') + '</div>';
       if (item.blocks.length > 3) {
         body += '<button class="more" data-open>＋ ほか' + (item.blocks.length - 3) + '件をすべて見る</button>';
@@ -544,6 +551,7 @@
       '<span class="block-label">' + esc(label) + '</span></div>';
 
     var editReq = findReq('edit', item.id, i);
+    var partDel = i == null ? null : findReq('delete', item.id, i);
 
     var tools =
       '<div class="tools">' +
@@ -556,10 +564,13 @@
         (edited ? '<button class="btn ghost sm req-mark" data-part="' + i + '" data-act="req">📝 ' +
           (editReq ? '変更申請を上書き' : '変更を申請') + '</button>' : '') +
         (edited ? '<button class="btn ghost sm" data-part="' + i + '" data-act="reset">元に戻す</button>' : '') +
+        (i == null ? '' :
+          '<button class="btn ghost sm req-btn-wide' + (partDel ? ' on' : '') + '" data-part="' + i + '" data-act="reqdelpart">' +
+          (partDel ? '🗑 削除申請を取り消す' : '🗑 このパーツの削除を申請') + '</button>') +
         '<span class="spacer"></span>' +
         '<span class="stat">' + text.length.toLocaleString('ja-JP') + '字' +
           (slots ? ' ・ 入力欄 ' + slots : '') + (edited ? ' ・ 編集中' : '') +
-          (editReq ? ' ・ 📝 申請済み' : '') + '</span>' +
+          (editReq ? ' ・ 📝 申請済み' : '') + (partDel ? ' ・ 🗑 削除申請中' : '') + '</span>' +
       '</div>';
 
     var content = on
@@ -659,6 +670,11 @@
       }
       return;
     }
+    if (act === 'reqdelpart') {
+      toggleDeleteReq(current, i);
+      renderSheetBody();
+      return;
+    }
     if (act === 'tonote') {
       syncEditors();
       appendToNote(getText(current, i), current.title);
@@ -724,7 +740,13 @@
       return;
     }
     if (ev.target.closest('[data-reqdel]')) {
-      toggleDeleteReq(item);
+      toggleDeleteReq(item, null);
+      render();
+      return;
+    }
+    var rdb = ev.target.closest('[data-reqdelblock]');
+    if (rdb) {
+      toggleDeleteReq(item, Number(rdb.getAttribute('data-reqdelblock')));
       render();
       return;
     }
@@ -975,7 +997,7 @@
   function mdInline(src) {
     var s = esc(src);
     var codes = [];
-    s = s.replace(/`([^`]+)`/g, function (_, c) { codes.push(c); return ' C' + (codes.length - 1) + ' '; });
+    s = s.replace(/`([^`]+)`/g, function (_, c) { codes.push(c); return '\uE000C' + (codes.length - 1) + '\uE000'; });
 
     s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;[^&]*&quot;)?\)/g, function (m, alt, url) {
       return safeUrl(url) ? '<img src="' + url + '" alt="' + alt + '" loading="lazy">' : m;
@@ -992,7 +1014,7 @@
     s = s.replace(/(^|[^*\w])\*([^*\n]+)\*/g, '$1<em>$2</em>');
     s = s.replace(/~~([^~\n]+)~~/g, '<s>$1</s>');
 
-    s = s.replace(/ C(\d+) /g, function (_, i) { return '<code>' + codes[Number(i)] + '</code>'; });
+    s = s.replace(/\uE000C(\d+)\uE000/g, function (_, i) { return '<code>' + codes[Number(i)] + '</code>'; });
     return s;
   }
 
@@ -1214,9 +1236,42 @@
     renderNoteFoot();
   }
 
+  /* --------------------------------------------- 入力欄とプレビューの連動
+     どちらかをスクロールすると、もう片方の同じ位置へ合わせる（旧アプリと同じ挙動）。
+     追従側が動くと相手の scroll イベントも鳴るので、
+     「いま人が触っている側」を覚えておいて、その間だけ逆向きの同期を止める。 */
+  var scrollDriver = null;
+  var scrollDriverTimer = null;
+
+  function syncScroll(source, target, force) {
+    if (!target.clientHeight) return;                 // スマホでプレビューが隠れているとき
+    if (!force) {
+      if (scrollDriver && scrollDriver !== source) return;
+      scrollDriver = source;
+      clearTimeout(scrollDriverTimer);
+      scrollDriverTimer = setTimeout(function () { scrollDriver = null; }, 140);
+    }
+    var sMax = Math.max(0, source.scrollHeight - source.clientHeight);
+    var tMax = Math.max(0, target.scrollHeight - target.clientHeight);
+    target.scrollTop = sMax > 0 ? (source.scrollTop / sMax) * tMax : 0;
+  }
+
+  (function bindScrollSync() {
+    var ed = $('noteEditor');
+    var pv = $('noteLivePreview');
+    ed.addEventListener('scroll', function () { syncScroll(ed, pv); }, { passive: true });
+    pv.addEventListener('scroll', function () { syncScroll(pv, ed); }, { passive: true });
+    // 入力やクリックでキャレットが動いて textarea がスクロールしたときも合わせる
+    ed.addEventListener('keyup', function () { syncScroll(ed, pv); });
+    ed.addEventListener('click', function () { syncScroll(ed, pv); });
+  })();
+
   function renderPreview(el) {
     var html = mdToHtml(note.content);
+    var live = el === $('noteLivePreview');
     el.innerHTML = html || '<p class="note-empty">まだ何も書かれていません。</p>';
+    // 書き換えでプレビューが先頭へ戻ってしまうので、入力欄の位置へ合わせ直す
+    if (live) syncScroll($('noteEditor'), el, true);
   }
 
   function renderNoteFoot() {
@@ -1454,16 +1509,24 @@
     return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   }
 
+  function normPart(p) { return (p === undefined || p === null || p === '') ? null : Number(p); }
+
   function findReq(kind, clipId, part) {
+    var want = normPart(part);
     for (var i = 0; i < store.reqs.length; i++) {
       var r = store.reqs[i];
       if (r.kind !== kind) continue;
       if (kind === 'add') continue;
       if (r.clipId !== clipId) continue;
-      if (kind === 'edit' && String(r.part) !== String(part)) continue;
+      if (normPart(r.part) !== want) continue;
       return r;
     }
     return null;
+  }
+
+  /* そのクリップに何らかの申請があるか（カードの表示用） */
+  function hasReq(kind, clipId) {
+    return store.reqs.some(function (r) { return r.kind === kind && r.clipId === clipId; });
   }
 
   function removeReq(rid) {
@@ -1505,15 +1568,41 @@
 
   $('reqBanner').addEventListener('click', function () { openReqSheet(); });
 
-  /* 削除申請（押すたびに 追加 / 取り消し） */
-  function toggleDeleteReq(item) {
-    var ex = findReq('delete', item.id, null);
+  /* 削除申請（押すたびに 追加 / 取り消し）
+     part を渡すと「そのパーツだけ削除」の申請になる（リンク集の1本、コピペ集の1項目など） */
+  function toggleDeleteReq(item, part) {
+    var p = normPart(part);
+    var ex = findReq('delete', item.id, p);
     if (ex) {
       removeReq(ex.rid);
       toast('削除申請を取り消しました', 'warn');
+      updateReqBadge();
+      return;
+    }
+
+    if (p === null) {
+      // クリップごと消すなら、同じクリップのパーツ削除申請は不要になる
+      var dropped = store.reqs.filter(function (r) {
+        return r.kind === 'delete' && r.clipId === item.id && normPart(r.part) !== null;
+      }).length;
+      if (dropped) {
+        store.reqs = store.reqs.filter(function (r) {
+          return !(r.kind === 'delete' && r.clipId === item.id && normPart(r.part) !== null);
+        });
+      }
+      pushReq({ kind: 'delete', clipId: item.id, title: item.title, cat: item.cat, part: null });
+      toast('🗑 「' + item.title + '」の削除を申請リストに入れました' +
+        (dropped ? '（パーツ単位の申請 ' + dropped + '件はまとめました）' : ''));
     } else {
-      pushReq({ kind: 'delete', clipId: item.id, title: item.title, cat: item.cat });
-      toast('🗑 「' + item.title + '」の削除を申請リストに入れました');
+      if (findReq('delete', item.id, null)) {
+        toast('このクリップ自体の削除を申請中です。先にそちらを取り消してください', 'warn');
+        return;
+      }
+      pushReq({
+        kind: 'delete', clipId: item.id, title: item.title, cat: item.cat,
+        part: p, partLabel: item.blocks[p].label
+      });
+      toast('🗑 「' + item.blocks[p].label + '」の削除を申請リストに入れました');
     }
     updateReqBadge();
   }
@@ -1566,6 +1655,10 @@
     var dels = reqs.filter(function (r) { return r.kind === 'delete'; });
     var eds = reqs.filter(function (r) { return r.kind === 'edit'; });
     var adds = reqs.filter(function (r) { return r.kind === 'add'; });
+    // クリップごと消すものだけが件数に影響する（パーツ削除は件数が変わらない）
+    var wholeDels = dels.filter(function (r) { return normPart(r.part) === null; }).length;
+    var partDels = dels.length - wholeDels;
+    var finalCount = ITEMS.length - wholeDels + adds.length;
 
     var L = [];
     L.push('# 新マルチクリップボード｜データ更新のお願い（全' + reqs.length + '件）');
@@ -1639,8 +1732,12 @@
     L.push('```');
     L.push('');
     L.push('現在の登録数：**' + ITEMS.length + '件**。');
-    L.push('この依頼をすべて反映すると **' + (ITEMS.length - dels.length + adds.length) + '件** になります。');
-    L.push('（削除 ' + dels.length + '件 ／ 変更 ' + eds.length + '件 ／ 追加 ' + adds.length + '件）');
+    L.push('この依頼をすべて反映すると **' + finalCount + '件** になります。');
+    L.push('（クリップ削除 ' + wholeDels + '件 ／ パーツ削除 ' + partDels + '件 ／ 本文変更 ' + eds.length +
+      '件 ／ 追加 ' + adds.length + '件）');
+    if (partDels) {
+      L.push('※パーツ削除はクリップの `blocks` から要素を抜くだけなので、`items` の件数は変わりません。');
+    }
     L.push('');
     L.push('---');
     L.push('');
@@ -1650,11 +1747,23 @@
 
     dels.forEach(function (r) {
       n++;
-      L.push('');
-      L.push('### ' + n + '. 【削除】' + r.title);
-      L.push('');
-      L.push('- 対象 id：`' + r.clipId + '`');
-      L.push('- `items` 配列から、この要素を**まるごと削除**してください。');
+      var p = normPart(r.part);
+      if (p === null) {
+        L.push('');
+        L.push('### ' + n + '. 【削除】' + r.title);
+        L.push('');
+        L.push('- 対象 id：`' + r.clipId + '`');
+        L.push('- `items` 配列から、この要素を**まるごと削除**してください。');
+      } else {
+        L.push('');
+        L.push('### ' + n + '. 【パーツ削除】' + r.title + ' ＞ ' + r.partLabel);
+        L.push('');
+        L.push('- 対象 id：`' + r.clipId + '`');
+        L.push('- 対象の場所：`blocks[' + p + ']`（' + (p + 1) + '番目のパーツ「' + r.partLabel + '」）');
+        L.push('- `blocks` 配列から**この要素だけ**を削除してください。クリップ自体は残します。');
+        L.push('- 同じクリップで複数のパーツを消す場合は、**添字がずれる**ので後ろのパーツから消すか、ラベルで特定してください。');
+        L.push('- 削除の結果 `blocks` が空になる場合は、勝手にクリップごと消さず、報告して止まってください。');
+      }
       if (r.memo) L.push('- 補足：' + r.memo);
     });
 
@@ -1786,8 +1895,14 @@
     var name, desc, peek = '';
 
     if (r.kind === 'delete') {
-      name = r.title;
-      desc = 'このクリップを丸ごと削除する（id: ' + r.clipId + '）';
+      var dp = normPart(r.part);
+      if (dp === null) {
+        name = r.title;
+        desc = 'このクリップを丸ごと削除する（id: ' + r.clipId + '）';
+      } else {
+        name = r.title + ' ＞ ' + r.partLabel;
+        desc = (dp + 1) + '番目のパーツだけを削除する（クリップ自体は残す）';
+      }
     } else if (r.kind === 'edit') {
       name = r.title;
       desc = (r.part == null ? '本文' : (r.part + 1) + '番目のパーツ「' + r.partLabel + '」') +

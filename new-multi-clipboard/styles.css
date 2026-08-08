@@ -675,6 +675,27 @@ html[data-theme="light"] #themeBtn .i-moon { display: none; }
 .row-copy:hover { color: var(--text); border-color: color-mix(in srgb, var(--c, var(--brand-1)) 60%, transparent); }
 .row-copy.done { background: #16a34a; border-color: #16a34a; color: #fff; }
 
+.row-del {
+  flex: 0 0 auto;
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1;
+  opacity: .55;
+  transition: .14s;
+}
+
+.row-del:hover { opacity: 1; color: #fff; background: #dc2626; border-color: #dc2626; }
+.row-del.on { opacity: 1; color: #fff; background: #dc2626; border-color: #dc2626; }
+
+.row.pending { border-color: color-mix(in srgb, #dc2626 45%, transparent); background: color-mix(in srgb, #dc2626 9%, var(--panel-2)); }
+.row.pending .row-label { text-decoration: line-through; color: var(--muted); }
+
 .more {
   border: 0;
   background: transparent;
