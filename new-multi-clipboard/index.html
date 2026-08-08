@@ -48,6 +48,10 @@
         </div>
 
         <div class="topbar-actions">
+          <button class="icon-btn" id="noteBtn" type="button" aria-label="メモ帳">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 4.6h9.1l4.5 4.5v9.9a1 1 0 01-1 1H5.2a1 1 0 01-1-1V5.6a1 1 0 011-1z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M13.9 4.8v4.5h4.6M7.6 13h7M7.6 16.2h4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span class="note-dot" id="noteDot" hidden></span>
+          </button>
           <button class="icon-btn" id="reqBtn" type="button" aria-label="申請リスト">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.8h10a1.2 1.2 0 011.2 1.2v14.6a.6.6 0 01-.93.5L12 16.6l-5.27 3.5a.6.6 0 01-.93-.5V5A1.2 1.2 0 017 3.8z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M9.4 9.4h5.2M12 6.9v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
             <span class="filter-count req" id="reqCount" hidden>0</span>
@@ -195,6 +199,52 @@
       </div>
     </div>
 
+    <!-- マークダウンメモ帳 -->
+    <div class="overlay" id="noteSheet" hidden>
+      <div class="overlay-backdrop" data-close></div>
+      <article class="sheet sheet-wide" role="dialog" aria-modal="true" aria-labelledby="noteTitle">
+        <header class="sheet-head note-head">
+          <div class="sheet-head-main">
+            <span class="sheet-cat">📝 メモ帳</span>
+            <h2 id="noteTitle">マークダウンメモ</h2>
+          </div>
+          <div class="sheet-head-btns">
+            <button class="icon-btn" data-close type="button" aria-label="閉じる">✕</button>
+          </div>
+        </header>
+
+        <div class="note-tabs" role="tablist">
+          <button class="note-tab on" data-tab="edit" type="button">✏️ 編集</button>
+          <button class="note-tab" data-tab="preview" type="button">👁 プレビュー</button>
+          <button class="note-tab" data-tab="history" type="button">🕘 履歴 <em id="noteHistCount">0</em></button>
+          <span class="note-status" id="noteStatus"></span>
+        </div>
+
+        <div class="note-pane" id="notePaneEdit">
+          <div class="note-tools" id="noteTools"></div>
+          <div class="note-split">
+            <textarea
+              id="noteEditor"
+              class="note-editor"
+              spellcheck="false"
+              placeholder="ここに自由に書けます（Markdown対応）&#10;&#10;# 見出し&#10;- 箇条書き&#10;- [ ] やること&#10;**太字** `コード` [リンク](https://example.com)"
+            ></textarea>
+            <div class="note-preview md" id="noteLivePreview"></div>
+          </div>
+        </div>
+
+        <div class="note-pane" id="notePanePreview" hidden>
+          <div class="note-preview md full" id="notePreview"></div>
+        </div>
+
+        <div class="note-pane" id="notePaneHistory" hidden>
+          <div class="note-history" id="noteHistory"></div>
+        </div>
+
+        <footer class="sheet-foot note-foot" id="noteFoot"></footer>
+      </article>
+    </div>
+
     <!-- 申請リスト -->
     <div class="overlay" id="reqSheet" hidden>
       <div class="overlay-backdrop" data-close></div>
@@ -268,6 +318,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script src="data.js"></script>
+    <script src="notepad-legacy.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
