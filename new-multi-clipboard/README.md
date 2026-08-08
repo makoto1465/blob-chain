@@ -52,9 +52,10 @@ Codex・Claude Code など**複数のAIが交代で編集する**前提なので
 2. 依頼一覧のとおりに `new-multi-clipboard/data.js` だけを書き換える
 3. `node -e "global.window={};require('./new-multi-clipboard/data.js');…"` で件数を検算
 4. `git add new-multi-clipboard/data.js` → commit → **push前にもう一度 pull --rebase** → push
-5. push すると Vercel が自動デプロイ
+5. `npx vercel@latest deploy --prod --yes --scope makoto1465s-projects` でデプロイ
+6. 公開URLを開いて件数を目視確認
 
-リポジトリを引っ越したときは、`app.js` 冒頭の `REPO` を書き換えれば、生成されるプロンプトも追従します。
+リポジトリや公開先を変えたときは、`app.js` 冒頭の `REPO` を書き換えれば、生成されるプロンプトも追従します。
 
 ```js
 var REPO = {
@@ -62,7 +63,9 @@ var REPO = {
   clone: 'https://github.com/makoto1465/blob-chain.git',
   branch: 'main',
   dir: 'new-multi-clipboard',
-  file: 'new-multi-clipboard/data.js'
+  file: 'new-multi-clipboard/data.js',
+  vercelScope: 'makoto1465s-projects',
+  site: 'https://new-multi-clipboard.vercel.app/'
 };
 ```
 
@@ -120,7 +123,15 @@ node -e "const h=require('http'),f=require('fs'),p=require('path');h.createServe
 
 ## デプロイ
 
-このフォルダをそのまま Vercel などの静的ホスティングに置けます（`vercel.json` 同梱）。
+公開先： **https://new-multi-clipboard.vercel.app/**
+リポジトリ： https://github.com/makoto1465/blob-chain （`new-multi-clipboard/`）
+
+```bash
+npx vercel@latest deploy --prod --yes --scope makoto1465s-projects
+```
+
+`.vercel/` にプロジェクトのひも付けが入っています（gitには入れていません）。
+GitHub への push では自動デプロイされないので、上のコマンドまで実行してください。
 
 > **公開前の注意**
 > 「M-CITY参謀AI システムプロンプト」には Googleドライブのフォルダ ID・カレンダー ID・メールアドレスが含まれています（アプリ内でも 🔒 マークが付きます）。

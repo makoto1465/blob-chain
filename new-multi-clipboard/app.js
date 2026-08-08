@@ -24,7 +24,9 @@
     clone: 'https://github.com/makoto1465/blob-chain.git',
     branch: 'main',
     dir: 'new-multi-clipboard',
-    file: 'new-multi-clipboard/data.js'
+    file: 'new-multi-clipboard/data.js',
+    vercelScope: 'makoto1465s-projects',
+    site: 'https://new-multi-clipboard.vercel.app/'
   };
 
   /* ---------------------------------------------------------------- 保存領域
@@ -1207,13 +1209,28 @@
     L.push('');
     L.push('- push 直前の `git pull --rebase` を省略しないでください。作業中に他のAIが更新している場合があります。');
     L.push('- コンフリクトが出た場合は、**自分の変更を優先して強制上書きせず**、内容を報告して止まってください。');
-    L.push('- push すると Vercel が自動でデプロイします。手動で流す場合は `' + REPO.dir + '/` で `vercel --prod` を実行してください。');
+    L.push('');
+    L.push('## デプロイ（公開反映）');
+    L.push('');
+    L.push('push しただけでは公開ページは変わりません。最後にデプロイまで実行してください。');
+    L.push('');
+    L.push('```bash');
+    L.push('cd ' + REPO.dir);
+    L.push('npx vercel@latest deploy --prod --yes --scope ' + REPO.vercelScope);
+    L.push('```');
+    L.push('');
+    L.push('- 公開URL：' + REPO.site);
+    L.push('- `' + REPO.dir + '/.vercel/` にプロジェクトのひも付けが入っています。消さないでください。');
+    L.push('- Vercel にログインしていない場合は、勝手にアカウントを作らず、その旨を報告して止まってください。');
+    L.push('- デプロイ後に公開URLを開き、件数と対象クリップが依頼どおりになっているか目視で確認してください。');
+    L.push('');
     L.push('');
     L.push('## 最後に報告すること');
     L.push('- 取り込んだ最新版のコミット（`git log --oneline -1`）');
     L.push('- 削除した id / 変更した id / 追加した id の一覧');
     L.push('- 反映前と反映後の件数');
     L.push('- push したコミットのハッシュ');
+    L.push('- デプロイ後の公開URL（本番）');
     L.push('- 判断に迷って手を止めた点があれば、その内容');
     L.push('');
     L.push('<!-- このプロンプトは「新マルチクリップボード」の申請リストから自動生成されました -->');
