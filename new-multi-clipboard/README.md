@@ -126,12 +126,16 @@ node -e "const h=require('http'),f=require('fs'),p=require('path');h.createServe
 URL： **https://new-multi-clipboard-makoto1465s-projects.vercel.app/**（Vercelログイン必須）
 リポジトリ： https://github.com/makoto1465/blob-chain （`new-multi-clipboard/`）
 
-```bash
-npx vercel@latest deploy --prod --yes --scope makoto1465s-projects
+```powershell
+pwsh ./deploy.ps1     # bash なら: bash ./deploy.sh
 ```
 
 `.vercel/` にプロジェクトのひも付けが入っています（gitには入れていません）。
-GitHub への push では自動デプロイされないので、上のコマンドまで実行してください。
+GitHub への push では自動デプロイされないので、上のスクリプトまで実行してください。
+
+**`vercel deploy` を直接叩かないでください。** 下記の理由でエイリアス削除まで必要です。
+スクリプトは「本番デプロイ → 公開エイリアス削除 → 状態検証」を一気にやり、
+公開されたままなら赤字で警告して異常終了します。
 
 ### 公開エイリアスを持たせない運用（重要）
 
@@ -142,7 +146,8 @@ Vercel の Hobby プランでは、Deployment Protection の `Standard Protectio
 そこで、自動割り当てされる `new-multi-clipboard.vercel.app` というエイリアス自体を削除し、
 保護対象である `new-multi-clipboard-makoto1465s-projects.vercel.app` だけを使う構成にしています。
 
-**本番デプロイのたびに、このエイリアスが自動で復活する場合があります。** デプロイ後に必ず確認してください。
+**本番デプロイのたびに、このエイリアスは自動で復活します**（検証済み）。だから `deploy.ps1` / `deploy.sh` を使ってください。
+手で流してしまった場合は、次を実行して消します。
 
 ```bash
 curl -s -o /dev/null -w "%{http_code}\n" https://new-multi-clipboard.vercel.app/
