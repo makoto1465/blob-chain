@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ja" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="dark light">
+    <meta name="theme-color" content="#0a0b0f">
+    <title>新マルチクリップボード</title>
+    <meta
+      name="description"
+      content="よく使うプロンプト・定型文・リンクを、探してすぐコピーするための読み取り専用クリップボード。"
+    >
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%8B%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="#" id="brandHome">
+          <span class="brand-mark">📋</span>
+          <span class="brand-text">
+            <b>新マルチクリップボード</b>
+            <i>NEW MULTI CLIPBOARD</i>
+          </span>
+        </a>
+
+        <div class="search">
+          <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true">
+            <path d="M21 21l-4.2-4.2M11 18a7 7 0 110-14 7 7 0 010 14z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input
+            id="search"
+            type="search"
+            autocomplete="off"
+            placeholder="キーワードで探す（タイトル・本文・タグ）"
+            aria-label="検索"
+          >
+          <kbd class="search-kbd">/</kbd>
+          <button class="search-clear" id="searchClear" type="button" aria-label="検索をクリア" hidden>✕</button>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-btn" id="reqBtn" type="button" aria-label="申請リスト">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.8h10a1.2 1.2 0 011.2 1.2v14.6a.6.6 0 01-.93.5L12 16.6l-5.27 3.5a.6.6 0 01-.93-.5V5A1.2 1.2 0 017 3.8z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M9.4 9.4h5.2M12 6.9v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span class="filter-count req" id="reqCount" hidden>0</span>
+          </button>
+          <button class="icon-btn" id="filterBtn" type="button" aria-label="絞り込み">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span class="filter-count" id="filterCount" hidden>0</span>
+          </button>
+          <button class="icon-btn" id="themeBtn" type="button" aria-label="テーマ切り替え">
+            <svg viewBox="0 0 24 24" class="i-moon" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill="currentColor"/></svg>
+            <svg viewBox="0 0 24 24" class="i-sun" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          </button>
+          <button class="icon-btn" id="helpBtn" type="button" aria-label="使い方">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M9.6 9.3a2.5 2.5 0 114.2 2c-.9.8-1.7 1.2-1.7 2.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="17" r="1.15" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <nav class="catbar" id="catbar" aria-label="ジャンル"></nav>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar" id="sidebar">
+        <section class="side-block">
+          <h2 class="side-title">ジャンル</h2>
+          <ul class="side-cats" id="sideCats"></ul>
+        </section>
+        <section class="side-block">
+          <div class="side-title-row">
+            <h2 class="side-title">タグ</h2>
+            <button class="mode-toggle" id="tagMode" type="button" title="複数タグの扱いを切り替え">いずれか</button>
+          </div>
+          <div class="side-tags" id="sideTags"></div>
+        </section>
+        <p class="side-foot">
+          このアプリは<b>読み取り専用</b>です。中身は書き換えても保存されません。
+        </p>
+      </aside>
+
+      <main class="content">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <h1 class="view-title" id="viewTitle">すべて</h1>
+            <span class="view-count" id="viewCount"></span>
+          </div>
+          <div class="toolbar-right">
+            <button class="btn ghost sm" id="addBtn" type="button">＋ 新しいクリップを追加申請</button>
+            <label class="sort">
+              <span>並び順</span>
+              <select id="sort">
+                <option value="recommend">おすすめ</option>
+                <option value="used">よく使う順</option>
+                <option value="recent">最近使った順</option>
+                <option value="title">名前順</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <p class="view-lead" id="viewLead"></p>
+
+        <button class="reqbanner" id="reqBanner" type="button" hidden></button>
+
+        <div class="activefilters" id="activeFilters"></div>
+
+        <div class="grid" id="grid"></div>
+
+        <div class="empty" id="empty" hidden>
+          <div class="empty-mark">🫧</div>
+          <p class="empty-title">見つかりませんでした</p>
+          <p class="empty-sub" id="emptySub">キーワードを短くするか、絞り込みを外してみてください。</p>
+          <div class="empty-btns">
+            <button class="btn primary" id="emptyWide" type="button" hidden></button>
+            <button class="btn ghost" id="emptyReset" type="button">絞り込みをすべて解除</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="foot">
+      <span id="footStats"></span>
+      <button class="linkish" id="footHelp" type="button">使い方をもう一度見る</button>
+    </footer>
+
+    <!-- 詳細 -->
+    <div class="overlay" id="detail" hidden>
+      <div class="overlay-backdrop" data-close></div>
+      <article class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+        <header class="sheet-head">
+          <div class="sheet-head-main">
+            <span class="sheet-cat" id="sheetCat"></span>
+            <h2 id="sheetTitle"></h2>
+          </div>
+          <div class="sheet-head-btns">
+            <button class="icon-btn" id="sheetFav" type="button" aria-label="お気に入り">☆</button>
+            <button class="icon-btn" data-close type="button" aria-label="閉じる">✕</button>
+          </div>
+        </header>
+        <div class="sheet-sub">
+          <p class="sheet-summary" id="sheetSummary"></p>
+          <div class="chips" id="sheetTags"></div>
+          <p class="sheet-note" id="sheetNote" hidden></p>
+        </div>
+        <div class="sheet-body" id="sheetBody"></div>
+      </article>
+    </div>
+
+    <!-- 絞り込み（モバイル用ボトムシート） -->
+    <div class="overlay overlay-bottom" id="filterSheet" hidden>
+      <div class="overlay-backdrop" data-close></div>
+      <div class="bottomsheet" role="dialog" aria-modal="true" aria-label="絞り込み">
+        <div class="bs-grip"></div>
+        <div class="bs-head">
+          <h2>絞り込み</h2>
+          <button class="icon-btn" data-close type="button" aria-label="閉じる">✕</button>
+        </div>
+        <div class="bs-body">
+          <h3 class="bs-title">ジャンル</h3>
+          <div class="bs-cats" id="bsCats"></div>
+          <div class="bs-title-row">
+            <h3 class="bs-title">タグ</h3>
+            <button class="mode-toggle" id="tagModeM" type="button">いずれか</button>
+          </div>
+          <div class="side-tags" id="bsTags"></div>
+        </div>
+        <div class="bs-foot">
+          <button class="btn ghost" id="bsReset" type="button">すべて解除</button>
+          <button class="btn primary" data-close type="button">結果を見る</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 使い方 -->
+    <div class="overlay" id="tour" hidden>
+      <div class="overlay-backdrop" data-close></div>
+      <div class="tour-card" role="dialog" aria-modal="true" aria-label="使い方">
+        <div class="tour-stage" id="tourStage"></div>
+        <div class="tour-nav">
+          <div class="tour-dots" id="tourDots"></div>
+          <div class="tour-btns">
+            <button class="btn ghost" id="tourPrev" type="button">もどる</button>
+            <button class="btn primary" id="tourNext" type="button">つぎへ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 申請リスト -->
+    <div class="overlay" id="reqSheet" hidden>
+      <div class="overlay-backdrop" data-close></div>
+      <article class="sheet" role="dialog" aria-modal="true" aria-labelledby="reqTitle">
+        <header class="sheet-head req-head">
+          <div class="sheet-head-main">
+            <span class="sheet-cat">📮 申請リスト</span>
+            <h2 id="reqTitle">変更のお願いをまとめる</h2>
+          </div>
+          <div class="sheet-head-btns">
+            <button class="icon-btn" data-close type="button" aria-label="閉じる">✕</button>
+          </div>
+        </header>
+        <div class="sheet-sub">
+          <p class="sheet-summary">
+            削除・変更・追加の申請をここに溜めて、最後に<b>1本のプロンプト</b>に変換します。
+            そのプロンプトをAIエージェント（Claude Code / Codex など）に渡すと <code>data.js</code> を書き換えてくれます。
+          </p>
+        </div>
+        <div class="sheet-body" id="reqBody"></div>
+        <footer class="sheet-foot" id="reqFoot"></footer>
+      </article>
+    </div>
+
+    <!-- 追加申請フォーム -->
+    <div class="overlay" id="addSheet" hidden>
+      <div class="overlay-backdrop" data-close></div>
+      <article class="sheet sheet-narrow" role="dialog" aria-modal="true" aria-labelledby="addTitle">
+        <header class="sheet-head">
+          <div class="sheet-head-main">
+            <span class="sheet-cat">＋ 追加申請</span>
+            <h2 id="addTitle">新しいクリップを追加する</h2>
+          </div>
+          <div class="sheet-head-btns">
+            <button class="icon-btn" data-close type="button" aria-label="閉じる">✕</button>
+          </div>
+        </header>
+        <div class="sheet-body">
+          <label class="field">
+            <span class="field-label">タイトル<i>必須</i></span>
+            <input id="addTitleInput" type="text" placeholder="例：カフェ会の告知文（初参加むけ）">
+          </label>
+          <label class="field">
+            <span class="field-label">ジャンル</span>
+            <select id="addCat"></select>
+          </label>
+          <div class="field">
+            <span class="field-label">タグ<i>いくつでも</i></span>
+            <div class="side-tags" id="addTags"></div>
+          </div>
+          <label class="field">
+            <span class="field-label">かんたんな説明<i>任意</i></span>
+            <input id="addSummary" type="text" placeholder="カードに出る1〜2行の説明。空ならAIに考えてもらいます">
+          </label>
+          <label class="field">
+            <span class="field-label">本文<i>必須</i></span>
+            <textarea id="addBody" class="editor" spellcheck="false" placeholder="ここにコピーしたい本文を貼り付けてください"></textarea>
+          </label>
+          <label class="field">
+            <span class="field-label">補足・お願い<i>任意</i></span>
+            <input id="addMemo" type="text" placeholder="例：リンク集の一番上に置いてほしい">
+          </label>
+        </div>
+        <footer class="sheet-foot">
+          <button class="btn ghost" data-close type="button">やめる</button>
+          <button class="btn primary grow" id="addSubmit" type="button">この内容で追加を申請する</button>
+        </footer>
+      </article>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
