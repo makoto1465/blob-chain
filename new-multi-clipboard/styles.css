@@ -900,17 +900,19 @@ html[data-theme="light"] #themeBtn .i-moon { display: none; }
   overflow: hidden;
 }
 
+/* 本文はそれ自体をスクロールさせない。
+   ここを overflow:auto + overscroll-behavior:contain にすると、
+   文字の上でホイールを回してもシート側へスクロールが伝わらなくなる。 */
 .pre {
   margin: 0;
   padding: 15px 16px;
-  overflow: auto;
+  overflow: hidden;
   font-family: var(--mono);
   font-size: 12.6px;
   line-height: 1.85;
   white-space: pre-wrap;
   word-break: break-word;
   color: var(--text-dim);
-  overscroll-behavior: contain;
 }
 
 .pre mark {
@@ -976,7 +978,8 @@ html[data-theme="light"] #themeBtn .i-moon { display: none; }
 
 .block-label { flex: 1 1 auto; min-width: 0; font-size: 13px; font-weight: 700; }
 .block-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-.block .pre { max-height: 240px; padding: 12px 13px; }
+/* パーツだけは高さを抑えて内部スクロール。端まで行けば親へスクロールが続く */
+.block .pre { max-height: 240px; overflow: auto; padding: 12px 13px; }
 .block .pre-wrap { background: var(--bg-soft); }
 .block-actions { display: flex; gap: 7px; flex-wrap: wrap; }
 

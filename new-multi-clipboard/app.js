@@ -1820,7 +1820,7 @@
     L.push('  ```bash');
     L.push('  node -e "global.window={};require(\'./' + REPO.file + '\');const d=window.CLIP_DATA;console.log(\'items\',d.items.length)"');
     L.push('  ```');
-    L.push('- 上のコマンドで `items` が **' + (ITEMS.length - dels.length + adds.length) + '** になっていること。');
+    L.push('- 上のコマンドで `items` が **' + finalCount + '** になっていること。');
     L.push('- すべての `cat` が `categories[].id` に、すべての `tags` が `tags[].id` に含まれていること。');
     L.push('- `id` の重複がないこと。');
     L.push('- 依頼していないクリップの本文が1文字も変わっていないこと（`git diff` で確認）。');
@@ -1832,7 +1832,8 @@
     L.push('');
     L.push('```bash');
     L.push('git add ' + REPO.file);
-    L.push('git commit -m "Update clipboard data (削除' + dels.length + ' / 変更' + eds.length + ' / 追加' + adds.length + ')"');
+    L.push('git commit -m "Update clipboard data (削除' + wholeDels + ' / パーツ削除' + partDels +
+      ' / 変更' + eds.length + ' / 追加' + adds.length + ')"');
     L.push('git pull --rebase origin ' + REPO.branch + '   # push前にもう一度最新を取り込む');
     L.push('git push origin ' + REPO.branch);
     L.push('```');
