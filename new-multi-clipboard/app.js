@@ -1166,8 +1166,10 @@
   }
 
   function updateNoteUndoButtons() {
-    $('noteUndo').disabled = !note.undo.length;
-    $('noteRedo').disabled = !note.redo.length;
+    var undo = $('noteUndo');
+    var redo = $('noteRedo');
+    if (undo) undo.disabled = !note.undo.length;
+    if (redo) redo.disabled = !note.redo.length;
   }
 
   function refreshNoteContent(status) {
@@ -1262,9 +1264,14 @@
   }
 
   function renderNoteTools() {
-    $('noteTools').innerHTML = TOOLS.map(function (t) {
+    $('noteTools').innerHTML =
+      '<button class="note-tool" id="noteUndo" type="button" data-note-action="undo" title="元に戻す" aria-label="元に戻す">↶</button>' +
+      '<button class="note-tool" id="noteRedo" type="button" data-note-action="redo" title="やり直す" aria-label="やり直す">↷</button>' +
+      '<span class="note-tool-sep" aria-hidden="true"></span>' +
+      TOOLS.map(function (t) {
       return '<button class="note-tool" type="button" data-tool="' + t.k + '" title="' + t.title + '">' + t.label + '</button>';
-    }).join('');
+      }).join('');
+    updateNoteUndoButtons();
   }
 
   function setNoteTab(tab) {
@@ -1392,9 +1399,6 @@
   }
 
   $('noteBtn').addEventListener('click', function () { openNote('edit'); });
-  $('noteUndo').addEventListener('click', undoNote);
-  $('noteRedo').addEventListener('click', redoNote);
-
   document.querySelector('.note-tabs').addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-tab]');
     if (b) setNoteTab(b.getAttribute('data-tab'));
@@ -1418,6 +1422,11 @@
   });
 
   $('noteTools').addEventListener('click', function (ev) {
+    var action = ev.target.closest('[data-note-action]');
+    if (action) {
+      if (action.getAttribute('data-note-action') === 'undo') undoNote(); else redoNote();
+      return;
+    }
     var b = ev.target.closest('[data-tool]');
     if (!b) return;
     var tool = TOOLS.filter(function (t) { return t.k === b.getAttribute('data-tool'); })[0];

@@ -1075,6 +1075,8 @@ html[data-theme="light"] #themeBtn .i-moon { display: none; }
 }
 
 .note-tool:hover { color: var(--text); border-color: var(--line-strong); background: var(--panel-2); }
+.note-tool:disabled { cursor: not-allowed; opacity: .35; }
+.note-tool-sep { width: 1px; height: 20px; margin: 5px 3px; background: var(--line-strong); }
 .note-tool i { font-style: italic; }
 .note-tool s { text-decoration: line-through; }
 
