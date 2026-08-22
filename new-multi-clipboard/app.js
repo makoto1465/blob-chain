@@ -1350,6 +1350,10 @@
   }
 
   $('noteBtn').addEventListener('click', function () { openNote('edit'); });
+  $('noteContinue').addEventListener('click', function () {
+    closeOverlay('noteSheet');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
   document.querySelector('.note-tabs').addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-tab]');
@@ -1707,8 +1711,8 @@
     L.push('2. 依頼一覧に書かれていないもの（他のクリップ・`categories`・`tags` の定義）は一切変更しないでください。');
     L.push('3. 既存の `id` は変更しないでください。');
     L.push('4. 本文は、指定されたテキストを**一字一句そのまま**入れてください。要約・整形・改行の調整・全角半角の統一などをしないでください。');
-    L.push('5. `cat` は `categories[].id` のいずれか、`tags` は `tags[].id` のいずれかにしてください。');
-    L.push('   新しいカテゴリやタグが必要だと思った場合は、勝手に作らず先に確認してください。');
+    L.push('5. `cat` は `categories[].id` のいずれかにしてください。`tags` は既存タグを優先してください。');
+    L.push('   タイトル・ジャンル・タグが未指定の場合は、本文から適切に補完してください。既存タグだけでは内容が分かりにくくなる場合に限り、新しいタグを追加して構いません。');
     L.push('6. 並び順（`items` の配列順）は、指定がない限り変えないでください。');
     L.push('');
     L.push('## データ構造（参考）');
@@ -1797,12 +1801,13 @@
       var a = r.add;
       var cat = CAT_BY_ID[a.cat];
       L.push('');
-      L.push('### ' + n + '. 【新規追加】' + a.title);
+      L.push('### ' + n + '. 【新規追加】' + (a.title || 'タイトル未指定'));
       L.push('');
       L.push('- `items` 配列の**末尾に追加**してください。');
       L.push('- `id`：内容に合う英小文字＋ハイフンで新しく付けてください（既存と重複しないこと）。');
-      L.push('- `cat`：`' + a.cat + '`（' + (cat ? cat.name : '') + '）');
-      L.push('- `tags`：' + (a.tags.length ? a.tags.map(function (t) { return '`' + t + '`'; }).join('、') : '内容を見て、既存タグの中から適切なものを付けてください'));
+      L.push('- `title`：' + (a.title || '未記入です。本文を読んで、内容が一目で分かるタイトルを考えてください'));
+      L.push('- `cat`：' + (a.cat ? '`' + a.cat + '`（' + (cat ? cat.name : '') + '）' : '未記入です。本文を読んで、既存ジャンルから最も適切なものを選んでください'));
+      L.push('- `tags`：' + (a.tags.length ? a.tags.map(function (t) { return '`' + t + '`'; }).join('、') : '未記入です。本文を読んで、既存タグを優先して適切なものを付けてください。既存タグだけでは分かりにくくなる場合に限り、新しいタグを追加してください'));
       L.push('- `summary`：' + (a.summary ? a.summary : '未記入です。本文を読んで、カード用に1〜2行の説明を作ってください'));
       L.push('- `type`：`single`（本文1本）');
       if (r.memo) L.push('- 補足：' + r.memo);
@@ -1910,9 +1915,9 @@
         ' を書き換える（' + r.after.length.toLocaleString('ja-JP') + '字）';
       peek = r.after.slice(0, 220);
     } else {
-      name = r.add.title;
+      name = r.add.title || 'タイトル未指定（AIが補完）';
       var c = CAT_BY_ID[r.add.cat];
-      desc = '新しく追加する ／ ' + (c ? c.icon + ' ' + c.name : r.add.cat) +
+      desc = '新しく追加する ／ ' + (c ? c.icon + ' ' + c.name : (r.add.cat || 'ジャンルはAIが選定')) +
         (r.add.tags.length ? ' ／ ' + r.add.tags.join('・') : '') +
         '（' + r.add.body.length.toLocaleString('ja-JP') + '字）';
       peek = r.add.body.slice(0, 220);
@@ -2037,7 +2042,7 @@
   }
 
   function openAddSheet() {
-    $('addCat').innerHTML = CATS.map(function (c) {
+    $('addCat').innerHTML = '<option value="">本文からAIに選ばせる</option>' + CATS.map(function (c) {
       return '<option value="' + c.id + '">' + c.icon + ' ' + esc(c.name) + '</option>';
     }).join('');
     addTags = [];
@@ -2064,7 +2069,6 @@
   $('addSubmit').addEventListener('click', function () {
     var title = $('addTitleInput').value.trim();
     var body = $('addBody').value.replace(/\s+$/, '');
-    if (!title) { toast('タイトルを入れてください', 'warn'); $('addTitleInput').focus(); return; }
     if (!body.trim()) { toast('本文を入れてください', 'warn'); $('addBody').focus(); return; }
 
     pushReq({
@@ -2080,7 +2084,7 @@
     });
     updateReqBadge();
     closeOverlay('addSheet');
-    toast('✨ 「' + title + '」の追加を申請リストに入れました');
+    toast('✨ 「' + (title || 'タイトルはAI補完') + '」の追加を申請リストに入れました');
     if ($('reqSheet').hidden) openReqSheet(); else renderReqSheet();
   });
 

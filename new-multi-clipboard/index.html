@@ -209,6 +209,7 @@
             <h2 id="noteTitle">マークダウンメモ</h2>
           </div>
           <div class="sheet-head-btns">
+            <button class="btn primary sm" id="noteContinue" type="button">一覧へ進む →</button>
             <button class="icon-btn" data-close type="button" aria-label="閉じる">✕</button>
           </div>
         </header>
@@ -284,15 +285,15 @@
         </header>
         <div class="sheet-body">
           <label class="field">
-            <span class="field-label">タイトル<i>必須</i></span>
-            <input id="addTitleInput" type="text" placeholder="例：カフェ会の告知文（初参加むけ）">
+            <span class="field-label">タイトル<i>任意・空ならAIが補完</i></span>
+            <input id="addTitleInput" type="text" placeholder="例：カフェ会の告知文（空ならAIが考えます）">
           </label>
           <label class="field">
-            <span class="field-label">ジャンル</span>
+            <span class="field-label">ジャンル<i>任意・空ならAIが選定</i></span>
             <select id="addCat"></select>
           </label>
           <div class="field">
-            <span class="field-label">タグ<i>いくつでも</i></span>
+            <span class="field-label">タグ<i>任意・既存を優先してAIが補完</i></span>
             <div class="side-tags" id="addTags"></div>
           </div>
           <label class="field">
