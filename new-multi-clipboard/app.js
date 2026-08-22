@@ -40,7 +40,7 @@
     var base = {
       used: {}, last: {}, fav: [], theme: 'dark', tour: false,
       tagMode: 'or', sort: 'recommend', reqs: [],
-      note: { content: '', history: [], seeded: false }
+      note: { content: '', history: [], undo: [], redo: [], seeded: false }
     };
     try {
       var raw = localStorage.getItem(LS_KEY);
@@ -58,6 +58,8 @@
         note: {
           content: (o.note && typeof o.note.content === 'string') ? o.note.content : '',
           history: (o.note && Array.isArray(o.note.history)) ? o.note.history : [],
+          undo: (o.note && Array.isArray(o.note.undo)) ? o.note.undo : [],
+          redo: (o.note && Array.isArray(o.note.redo)) ? o.note.redo : [],
           seeded: !!(o.note && o.note.seeded)
         }
       };
@@ -1153,6 +1155,48 @@
   }
 
   var HIST_MAX = 40;
+  var NOTE_UNDO_MAX = 120;
+
+  function pushNoteUndo(content) {
+    if (note.undo.length && note.undo[note.undo.length - 1] === content) return false;
+    note.undo.push(content);
+    if (note.undo.length > NOTE_UNDO_MAX) note.undo.shift();
+    note.redo = [];
+    return true;
+  }
+
+  function updateNoteUndoButtons() {
+    $('noteUndo').disabled = !note.undo.length;
+    $('noteRedo').disabled = !note.redo.length;
+  }
+
+  function refreshNoteContent(status) {
+    $('noteEditor').value = note.content;
+    updateNoteDot();
+    renderPreview($('noteLivePreview'));
+    if (noteTab === 'preview') renderPreview($('notePreview'));
+    renderNoteFoot();
+    renderNoteHistory();
+    updateNoteUndoButtons();
+    if (status) $('noteStatus').textContent = status;
+  }
+
+  function undoNote() {
+    if (!note.undo.length) return;
+    note.redo.push(note.content);
+    note.content = note.undo.pop();
+    save();
+    refreshNoteContent('元に戻しました');
+  }
+
+  function redoNote() {
+    if (!note.redo.length) return;
+    note.undo.push(note.content);
+    if (note.undo.length > NOTE_UNDO_MAX) note.undo.shift();
+    note.content = note.redo.pop();
+    save();
+    refreshNoteContent('やり直しました');
+  }
 
   function pushHistory(content, reason) {
     if (!content || !content.trim()) return false;
@@ -1327,15 +1371,12 @@
   }
 
   function setNoteContent(next, why) {
-    if (note.content.trim() && note.content !== next) pushHistory(note.content, why || 'restore');
+    if (note.content === next) return;
+    if (note.content.trim()) pushHistory(note.content, why || 'restore');
+    pushNoteUndo(note.content);
     note.content = next;
     save();
-    $('noteEditor').value = next;
-    updateNoteDot();
-    renderPreview($('noteLivePreview'));
-    if (noteTab === 'preview') renderPreview($('notePreview'));
-    renderNoteFoot();
-    renderNoteHistory();
+    refreshNoteContent();
   }
 
   function openNote(tab) {
@@ -1345,15 +1386,14 @@
     renderNoteHistory();
     setNoteTab(tab || 'edit');
     $('noteStatus').textContent = '自動保存';
+    updateNoteUndoButtons();
     openOverlay('noteSheet');
     if (!tab || tab === 'edit') setTimeout(function () { $('noteEditor').focus(); }, 60);
   }
 
   $('noteBtn').addEventListener('click', function () { openNote('edit'); });
-  $('noteContinue').addEventListener('click', function () {
-    closeOverlay('noteSheet');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+  $('noteUndo').addEventListener('click', undoNote);
+  $('noteRedo').addEventListener('click', redoNote);
 
   document.querySelector('.note-tabs').addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-tab]');
@@ -1361,8 +1401,10 @@
   });
 
   $('noteEditor').addEventListener('input', function (ev) {
+    if (note.content !== ev.target.value) pushNoteUndo(note.content);
     note.content = ev.target.value;
     updateNoteDot();
+    updateNoteUndoButtons();
     $('noteStatus').textContent = '保存中…';
     clearTimeout(noteSaveTimer);
     noteSaveTimer = setTimeout(function () {
@@ -1407,13 +1449,10 @@
       if (act === 'clear') {
         if (!note.content.trim()) { toast('メモは空です', 'warn'); return; }
         pushHistory(note.content, 'clear');
+        pushNoteUndo(note.content);
         note.content = '';
         save();
-        $('noteEditor').value = '';
-        updateNoteDot();
-        renderPreview($('noteLivePreview'));
-        renderNoteFoot();
-        renderNoteHistory();
+        refreshNoteContent();
         $('noteHistCount').textContent = note.history.length;
         toast('🗑 履歴に退避してクリアしました（履歴タブから戻せます）', 'warn');
         return;
@@ -1491,9 +1530,11 @@
   function appendToNote(text, label) {
     var next = note.content.trim() ? note.content.replace(/\s+$/, '') + '\n\n' + text : text;
     if (note.content.trim()) pushHistory(note.content, 'append');
+    pushNoteUndo(note.content);
     note.content = next;
     save();
     updateNoteDot();
+    updateNoteUndoButtons();
     toast('📝 メモに追加しました' + (label ? '：' + label : ''));
   }
 
@@ -2100,6 +2141,12 @@
         $('noteHistCount').textContent = note.history.length;
         toast('💾 いまの内容を履歴に保存しました');
       }
+      return;
+    }
+
+    if (!$('noteSheet').hidden && (ev.metaKey || ev.ctrlKey) && (ev.key === 'z' || ev.key === 'Z' || ev.key === 'y' || ev.key === 'Y')) {
+      ev.preventDefault();
+      if (ev.key === 'y' || ev.key === 'Y' || ev.shiftKey) redoNote(); else undoNote();
       return;
     }
 
